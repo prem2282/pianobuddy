@@ -1,99 +1,160 @@
 .notesContainter {
-    display: grid;
-    grid-template-columns: 7% 86% 7%;
-  }
-  .notesNavButton{
-    background-color: IndianRed;
-    color: white;
-    cursor: pointer;
-    align-self: center;
-    margin: .5em;
-    padding: .5em;
-    border-radius: 3rem;
-    font-family: 'Indie+Flower', cursive;
-    font-size: 1.5rem;
-  }
-  
-  
-  .notesHeaderBox{
-    display: grid;
-    grid-template-columns: 10% 80% 10%;
-    padding-right: 10%;
-    padding-left: 10%;
-    background: IndianRed;
-    margin-bottom: 0;
-    height: 3rem;
-  }
-  
-  
-  .notesHeaderText{
-    color: Snow;
-    font-family: 'Pompiere', cursive;
-    margin-bottom: 0;
-  }
-  
-  
-  .notesPage{
-    background: Beige;
-    display: grid;
-    grid-template-columns: 100%;
-    min-height: 100vh;
-    max-height: 100%;
-  }
-  
-  .flexNotes{
-    display: flex;
-    align-self: baseline;
-    /*grid-template-columns: 65px 200px 200px 200px;*/
-    /*padding-left: 5%;
-    padding-right: 5%;*/
-    /*justify-content: center;*/
-  }
-  
-  .singles{
-    display: grid;
-    grid-template-columns: 65px 200px 200px 200px;
-    padding-left: 10%;
-  }
-  
-  .noteBox{
-      display: grid;
-      grid-template-columns: 100%;
-  }
-  
-  .noteTextBox{
-    /*border: .5px solid blue;*/
-    /*font-size: .8rem;*/
-    background-color: BurlyWood;
-    margin-left: .2rem;
-    border-radius: .5rem;
-    text-transform:capitalize;
-    font-family: 'Pompiere', cursive;
-  }
-  
-  .noteSideBox{
-    /*border: .5px solid blue;*/
-    /*font-size: .8rem;*/
-    background-color: IndianRed;
-    margin-left: .2rem;
-    border-radius: .5rem;
-    text-transform:capitalize;
-    color: Snow;
-    font-family: 'Pompiere', cursive;
-  }
-  
-  .lyricBox{
-    font-family: 'Pompiere', cursive;
-    font-size: 1.5rem;
-    background-color: MediumSlateBlue;
-    color: Lavender;
-  }
-  
+  display: grid;
+  grid-template-columns: 10% 80% 10%;
+}
+
+.songOptionButton{
+display: flex;
+background-color: IndianRed;
+color: white;
+cursor: pointer;
+align-self: center;
+margin: .5em;
+padding: .5em;
+border-radius: 3rem;
+font-family: 'Pompiere', cursive;
+font-size: 1.5rem;
+justify-content: center;
+
+}
+.notesNavButton{
+display: grid;
+background-color: IndianRed;
+color: white;
+cursor: pointer;
+align-self: center;
+margin: .5em;
+padding: .5em;
+border-radius: 3rem;
+font-family: 'Indie+Flower', cursive;
+font-size: 1.5rem;
+}
+
+.navButtonBox {
+display: flex;
+justify-content: center;
+}
+
+.notesHeaderBox{
+display: grid;
+grid-template-columns: 10% 80% 10%;
+padding-right: 10%;
+padding-left: 10%;
+background: IndianRed;
+margin-bottom: 0;
+height: 3rem;
+}
+
+
+.notesHeaderText{
+color: Snow;
+font-family: 'Pompiere', cursive;
+margin-bottom: 0;
+}
+
+
+.notesPage{
+background: Beige;
+display: grid;
+grid-template-columns: 100%;
+min-height: 100vh;
+max-height: 100%;
+}
+
+.flexNotes{
+display: block;
+/*grid-template-columns: 65px 200px 200px 200px;*/
+/*padding-left: 5%;
+padding-right: 5%;*/
+/*justify-content: center;*/
+}
+
+.flexNotesInner{
+display: flex;
+padding-left: 5%;
+}
+
+
+
+.singles{
+display: grid;
+grid-template-columns: 65px 200px 200px 200px;
+padding-left: 10%;
+}
+
+.noteBox{
+  display: grid;
+  grid-template-columns: 100%;
+  -webkit-transition: background-color 200ms linear;
+  -ms-transition: background-color 200ms linear;
+  transition: background-color 200ms linear;
+}
+
+.correctNoteBox{
+background-color: lightBlue;
+background-blend-mode: luminosity;
+-webkit-transition: background-color 200ms linear;
+-ms-transition: background-color 200ms linear;
+transition: background-color 200ms linear;
+}
+
+.wrongNoteBox{
+background-color: IndianRed;
+background-blend-mode: luminosity;
+-webkit-transition: background-color 200ms linear;
+-ms-transition: background-color 200ms linear;
+transition: background-color 200ms linear;
+}
+
+
+.noteTextBox{
+/*border: .5px solid blue;*/
+/*font-size: .8rem;*/
+/*background-color: transparent;*/
+
+margin-left: .1rem;
+margin-right: .1rem;
+border-radius: .5rem;
+border-style: solid;
+border-width: thin;
+border-color: IndianRed;
+text-transform:capitalize;
+font-family: 'Pompiere', cursive;
+}
+
+.noteSideBox{
+/*border: .5px solid blue;*/
+/*font-size: .8rem;*/
+background-color: IndianRed;
+margin-left: .2rem;
+border-radius: .5rem;
+text-transform:capitalize;
+color: Snow;
+font-family: 'Pompiere', cursive;
+}
+
+.lyricBox{
+font-family: 'Pompiere', cursive;
+font-size: 1.5rem;
+background-color: MediumSlateBlue;
+margin-bottom: 0;
+color: Lavender;
+}
+
+.lineBox{
+/*margin: 1em;*/
+background-color: NavajoWhite;
+border-radius: 0rem;
+margin-left: 0%;
+margin-right: 0%;
+height: 100vh;
+}
+
+@media screen and (orientation:portrait) {
+
   .lineBox{
-    margin: 1em;
-    background-color: NavajoWhite;
-    border-radius: 1rem;
-    margin-left: 10%;
-    margin-right: 10%;
+    margin-left: 0%;
+    margin-right: 0%;
   }
-  
+
+}
