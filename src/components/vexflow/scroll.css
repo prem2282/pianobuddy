@@ -1,0 +1,45 @@
+#container {
+    width: 400px;
+    height: 120px;
+    overflow: hidden;
+    border: 1px solid deeppink;
+    marging: 10px;
+  }
+  
+  #container > div {
+    width: 10000px;
+    height: 120px;
+    white-space: nowrap;
+  }
+  
+  #controls {
+    display: flex;
+    /*padding: 15px;*/
+    justify-content: center;
+  }
+  
+  #controls > button {
+    /*margin: 5px;*/
+  }
+  
+  .scroll {
+    transition: transform 5s linear, opacity 0.5s ease-out, fill 0.2s linear;
+  }
+  
+  .scrolling {
+    transform: translate(-400px, 0);
+  
+  }
+  
+  .correct {
+    opacity: 0;
+    transform: rotate(90deg);
+    transform: scale(.5, .5);
+  }
+  
+  .too-slow {
+    transform: translate(-400px, 2000px);
+    /*transform: rotateX(-150deg);*/
+    /*transform: scale(.5, .5);*/
+  }
+  
