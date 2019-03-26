@@ -147,7 +147,8 @@ background-color: NavajoWhite;
 border-radius: 0rem;
 margin-left: 0%;
 margin-right: 0%;
-height: 100vh;
+height: auto;
+margin-bottom: 1em;
 }
 
 @media screen and (orientation:portrait) {

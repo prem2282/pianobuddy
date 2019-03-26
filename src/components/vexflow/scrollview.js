@@ -1,19 +1,22 @@
+
 import Vex from 'vexflow';
 import React, {Component} from 'react';
 import './scroll.css'
 import NoteFormation from './noteFormation';
+import NoteForTone from './noteForTone';
 import MIDISounds from 'midi-sounds-react';
 import {Animated} from 'react-animated-css';
 const VF = Vex.Flow;
 const visibleNoteGroups = [];
 const svgContainer = document.createElement('div');
 var renderer = new VF.Renderer(svgContainer, VF.Renderer.Backends.SVG);
-var stave = new VF.Stave(0, 0, 10000)
+var stave = new VF.Stave(0, 0, window.innerWidth)
 .addClef('treble');
 
 // Configure the rendering context.
-renderer.resize(600, 100);
+renderer.resize(window.innerWidth, 100);
 var context = renderer.getContext();
+let bpm = 80;
 
 var tickContext = new VF.TickContext();
 
@@ -27,7 +30,6 @@ export default class ScrollView2 extends Component {
             x: 0,
             y: 0,
             scrollStarted: false,
-            noteNumbers: [4,10,20,10,3,25,3,4,3,4,4,4,4,4,4,]
 
         };
     };
@@ -54,24 +56,31 @@ export default class ScrollView2 extends Component {
 
       let input =  this.props.notes;
 
+      let noteTags = input.split(' ')
+      // console.log({noteTags})
+      // let noteText = noteTags.map((stave_note) => { return NoteForTone(stave_note).noteTone});
 
-      let noteTags = input.split(',')
       let notes = noteTags.map(noteTag => {
         return this.noteFormation(noteTag).note
       })
 
+      
 
-      tickContext.preFormat().setX(400);
+      tickContext.preFormat().setX(700);
       this.setState({
         notes : notes,
-        scrollStarted: false
+        scrollStarted: false,
+        noteTags: noteTags,
+        noteCurrent: noteTags[0],
       })
+      noteTags.shift()
     }
     componentDidMount() {
 
+        console.log("componentDidMount");
         stave.setContext(context).draw();
         this.initializeNotes();
-
+        console.log("initializeNotes done");
         this.refs.outer.appendChild(svgContainer);
         this.inputElement.focus();
     }
@@ -88,11 +97,16 @@ export default class ScrollView2 extends Component {
 
         console.log(event.key);
 
-        if (xvalue < -300) {
+        if (xvalue < -600) {
           console.log("can execute now");
           let group = visibleNoteGroups.shift();
           console.log('group', group);
           group.classList.add('correct');
+          let { noteTags} = this.state;
+          let noteCurrent = noteTags.shift();
+          this.setState({
+            noteCurrent: noteCurrent,
+          })
           // The note will be somewhere in the middle of its move to the left -- by
           // getting its computed style we find its x-position, freeze it there, and
           // then send it straight up to note heaven with no horizontal motion.
@@ -127,14 +141,18 @@ export default class ScrollView2 extends Component {
     timeDuration = (durationText) => {
       switch (durationText) {
         case 'q':
-          return 500
+          return 60/bpm*1000
           break;
         case 'h':
-          return 1000
+          return 2*(60/bpm*1000)
           break;
         case 'w':
-          return 2000
+          return 4*(60/bpm*1000)
           break;
+        case '8':
+          return .5*(60/bpm*1000)
+          break;
+
         default:
 
       }
@@ -142,16 +160,15 @@ export default class ScrollView2 extends Component {
 
     onAddNote = () => {
 
-      let notes = this.state.notes;
+      let {notes} = this.state;
 
-      // this.midiSounds.playChordNow(3, [this.state.noteNumbers[0]+60], .5);
-      // console.log("playing note:", this.state.noteNumbers[visibleNoteGroups.length]+60 )
 
-    	let note = notes.shift();
+      let note = notes.shift();
       // console.log('note', note);
       this.setState({
         notes: notes,
         scrollStarted: true,
+
       })
     	if(note) {
       // var context = renderer.getContext();
@@ -177,6 +194,11 @@ export default class ScrollView2 extends Component {
     		if(index === -1) return;
     		group.classList.add('too-slow');
         visibleNoteGroups.shift();
+        let { noteTags} = this.state;
+        let noteCurrent = noteTags.shift();
+        this.setState({
+          noteCurrent: noteCurrent,
+        })
         // this.onAddNote();
     	}, 5000);
       } else {
@@ -193,6 +215,8 @@ export default class ScrollView2 extends Component {
 
     render() {
 
+        // console.clear();
+
         let {notes, scrollStarted} = this.state
         if (notes &&  !scrollStarted) {
           console.log("scrollStarted");
@@ -200,28 +224,18 @@ export default class ScrollView2 extends Component {
         }
 
         return(
-          <div style={{
-              border: "0px blue solid",
-              padding: 0,
-              paddingLeft: 30,
-              borderRadius: 0,
-              marginBottom: 0,
-              background: 'Aqua',
-              display: "inline-block",
-          }}>
-            <div ref="outer" >
+          <div>
+            <div className="scrollStaveBox" >
+              <div className="scrollStave" ref="outer" ></div>
+              <div className="scrollStave dummyStave">
+              <p className="scrollBoxText">{this.state.noteCurrent}</p>
+              </div>
             </div>
             <div id="controls">
               <div id='add-note' className="noteTextBox" onClick={this.onAddNote}>Add Note</div>
-              <div id='right-answer' className="noteTextBox" ref={(inp) => {this.inputElement = inp}} onKeyUp={(e) => this.onRightNote(e)}>Right Answer</div>
+              <div id='right-answer' className="noteTextBox" ref={(inp) => {this.inputElement = inp}} onClick={(e) => this.onRightNote(e)}>Right Answer</div>
               <div id='reset' className="noteTextBox" onClick={this.resetScroll}>Reset</div>
-              <Animated  animationIn="fadeOut" animationOut="fadeOut" isVisible={false}>
-                      <MIDISounds 
-                                  ref={(ref) => (this.midiSounds = ref)} 
-                                  appElementName="root" instruments={[3]} 
-                                  isVisible={false}
-                                  />
-              </Animated>
+
 
             </div>
           </div>
