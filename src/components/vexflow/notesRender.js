@@ -132,7 +132,7 @@ class notesRender extends Component {
         let noteNum = NoteToNum(noteString) + noteScale*12;
         // let {noteTone, duration} = note;
         // let noteNum = NoteNumMap(noteTone);
-        let duration = Tone.Time(noteDuration);
+        let duration = Tone.Time(noteDuration).toSeconds();
         console.log({duration});
         console.log({noteNum}, {time}, {instrument}, {duration} );
         // synth.triggerAttackRelease(noteTone, duration, Tone.context.currentTime + time )
@@ -259,7 +259,7 @@ class notesRender extends Component {
       });
     }
 
-    setClassForCorrect = (i) => {
+    setClassForNoteBG = (i) => {
 
 
 
@@ -394,7 +394,7 @@ class notesRender extends Component {
                 />
             </Animated>
             <Animated animationIn="flipInX" animationOut="zoomOut" isVisible={notesVisibility}>
-                <h2 id = {'noteText' + i} className="noteTextBox" onClick={() => this.setClassForCorrect(i)}>
+                <h2 id = {'noteText' + i} className="noteTextBox" onClick={() => this.setClassForNoteBG(i)}>
                 {noteKey}
                 </h2>
             </Animated>
