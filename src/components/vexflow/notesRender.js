@@ -22,7 +22,7 @@ import NoteToNum from './noteToNum';
 
 let input = null;
 let output = null;
-var context = new AudioContext();
+let context = new AudioContext();
 let instrument = 771;
 let noteIndex = 0;
 let synth = new Tone.Synth().toMaster()
@@ -116,12 +116,13 @@ class notesRender extends Component {
       // })
     }
 
-    playNotesAlt = () => {
+    playNotesOld = () => {
 
       let noteObject = this.state.noteObject[this.state.staveIndex]
       console.log({noteObject})
 
       let time = Tone.context.currentTime;
+      console.log('AudiocontextTime:',context.currentTime)
       console.log("currentTime", time);
       // let instrument = 3;
       noteObject.forEach((note,index) => {
@@ -132,13 +133,13 @@ class notesRender extends Component {
         let noteNum = NoteToNum(noteString) + noteScale*12;
         // let {noteTone, duration} = note;
         // let noteNum = NoteNumMap(noteTone);
-        let duration = Tone.Time(noteDuration).toSeconds();
-        console.log({duration});
-        console.log({noteNum}, {time}, {instrument}, {duration} );
+        let duration = Tone.Time(noteDuration);
+
+        console.log(noteNum, time, instrument, duration );
         // synth.triggerAttackRelease(noteTone, duration, Tone.context.currentTime + time )
 
         this.midiSounds.playChordAt(time, instrument, [noteNum], duration)
-        time = time + Tone.Time(duration)
+        time = time + duration;
 
       })
 
@@ -151,16 +152,52 @@ class notesRender extends Component {
       console.log({noteText})
 
       let time = Tone.Time('4n')
+      // console.log(time)
       noteText.forEach((note,index) => {
         console.log({note},{index},{time})
         let {noteTone, duration} = note;
         synth.triggerAttackRelease(noteTone, duration, Tone.context.currentTime + time )
+ 
         time = time + Tone.Time(duration)
 
       })
 
 
     }
+
+    playNotesAlt = () => {
+
+      // let noteObject = this.state.noteObject[this.state.staveIndex]
+      // console.log({noteObject})
+      // console.clear()
+ 
+
+      // let time = Tone.context.currentTime;
+      // console.log("currentTime", time);
+      // let instrument = 3;
+      let noteObject = this.state.noteObject[this.state.staveIndex]
+      console.log({noteObject})
+      // let noteText = this.state.noteText[this.state.staveIndex]
+      // console.log({noteText})
+
+      let time = Tone.context.currentTime;
+      // console.log(time)
+      noteObject.forEach((note,index) => {
+        console.log({note},{index},{time})
+        let {noteString, noteScale, noteDuration} = note;
+        let duration = Tone.Time(noteDuration);
+        let noteNum = NoteToNum(noteString) + noteScale*12;
+        // let {noteTone, duration} = note;
+        // synth.triggerAttackRelease(noteTone, duration, Tone.context.currentTime + time )
+        this.midiSounds.playChordAt(time, instrument, [noteNum], duration)
+
+        time = time + duration
+
+      })
+
+
+    }
+
     notesClicked = () => {
 
       // synth.triggerAttackRelease(noteText[noteIndex], '8n')
@@ -570,6 +607,13 @@ class notesRender extends Component {
       </Animated>
       )
     }
+    backToTop = () => {
+      this.setState({
+        staveIndex: 0,
+        showLine: false,
+        firstTime: true,
+      })
+    }
     playTestInstrument = () => {
       console.clear();
       // this.midiSounds.playChordNow(3, [65], 2.5);
@@ -600,13 +644,14 @@ class notesRender extends Component {
         //     notesVisibility: true
         //   })
         // }
-        if (componentDidMount && !showAll && notesVisibility){
+        if (componentDidMount && !showAll && notesVisibility && !firstTime){
 
           this.playNotesAlt();
         }
         let header = (
           <div className="notesHeaderBox">
-            <h4 onClick={this.playNotes}></h4>
+            {/* <h4 onClick={this.playNotes}>click</h4> */}
+            <h4 onClick={this.backToTop}>back</h4>
             <h1 className="notesHeaderText">{this.state.notes_title}</h1>
             <h2 className="notesHeaderText" onClick={() => this.showAllClicked()}> {showButtonText} </h2>
           </div>
