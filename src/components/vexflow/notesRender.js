@@ -139,7 +139,7 @@ class notesRender extends Component {
         // synth.triggerAttackRelease(noteTone, duration, Tone.context.currentTime + time )
 
         this.midiSounds.playChordAt(time, instrument, [noteNum], duration)
-        time = time + duration;
+        time = time + Tone.Time(duration)
 
       })
 
