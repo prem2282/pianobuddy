@@ -296,6 +296,13 @@ class notesRender extends Component {
       },'4n')
 
     }
+
+    keyInputReceived = (e) => {
+        console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ").");
+        this.setState({
+          playedKey: e.note.name + e.note.octave
+        })
+    }
     componentDidMount() {
 
 
@@ -315,7 +322,7 @@ class notesRender extends Component {
       })
       this.setTrasport();
 
-      WebMidi.enable(function (err) {
+      WebMidi.enable( (err) => {
 
         if (err) {
           console.log("WebMidi could not be enabled.", err);
@@ -333,14 +340,9 @@ class notesRender extends Component {
           //   console.log("note value: " + e.value);
           // });
           input.addListener('noteon', 'all',
-             function (e) {
-            console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ").");
-            this.setState({
-              playedKey: e.note.name + e.note.octave
-            })
+            ((e) => {this.keyInputReceived(e)})
+         )
         }
-    );
-         }
          if (output) {
            output.playNote("C4");
          } else {
