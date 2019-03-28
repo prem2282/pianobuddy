@@ -1,6 +1,17 @@
-.notesContainter {
+.notesHeader {
+  color: Lavender;
   display: grid;
   grid-template-columns: 10% 80% 10%;
+
+}
+.notesContainter {
+  display: grid;
+  grid-template-columns: 100%;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
 }
 
 .songOptionButton{
@@ -21,13 +32,14 @@ justify-content: center;
 display: grid;
 background-color: IndianRed;
 color: white;
+width: Auto;
 cursor: pointer;
 align-self: center;
-margin: .5em;
-padding: .5em;
-border-radius: 3rem;
+margin: .1rem;
+padding: .1rem .5rem;
+border-radius: 1rem;
 font-family: 'Indie+Flower', cursive;
-font-size: 1.5rem;
+font-size: 1.2rem;
 }
 
 .navButtonBox {
@@ -136,9 +148,10 @@ font-family: 'Pompiere', cursive;
 .lyricBox{
 font-family: 'Pompiere', cursive;
 font-size: 1.5rem;
-background-color: MediumSlateBlue;
+/*background-color: MediumSlateBlue;*/
 margin-bottom: 0;
-color: Lavender;
+color: DarkSlateGray;
+font-weight: bolder;
 }
 
 .lineBox{

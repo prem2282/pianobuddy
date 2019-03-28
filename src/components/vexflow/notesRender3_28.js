@@ -1,5 +1,4 @@
 
-
 import React, {Component} from 'react';
 import Clef from "./clefandtime";
 // import Voice from "./voice";
@@ -13,15 +12,13 @@ import {Animated} from 'react-animated-css';
 import {Button} from 'antd';
 import ReactDOM from 'react-dom';
 import WebMidi from 'webmidi';
-import MIDI from 'midi.js'; 
+import MIDI from 'midi.js';
 import MIDISounds from 'midi-sounds-react';
 import Tone from 'tone';
 import NoteFormation from './noteFormation';
 import NoteForTone from './noteForTone';
 import NoteForMidiPlayer from './noteForMidiPlayer';
 import SingleNote from './singlenote';
-import SingleNote2 from './singleNote2';
-import PianoKeys from './pianoKeys';
 import Clefandtime from './clefandtime';
 
 // import WebAudio from './webAudioFontDemo';
@@ -78,13 +75,11 @@ class notesRender extends Component {
             componentDidMount: false,
             noteDelay: noteDelay,
             firstTime:true,
-            currentStaveNotes:[],
             playNotes:false,
             notesPlayEnded: false,
             time: 0,
             scrollView: false,
             playedKey: '',
-            practice: false,
         };
     };
 
@@ -165,7 +160,6 @@ class notesRender extends Component {
       console.clear()
 
       let noteText = this.state.noteText[this.state.staveIndex]
-
       console.log({noteText})
 
       let time = Tone.Time('4n')
@@ -209,25 +203,7 @@ class notesRender extends Component {
 
 
     }
-    playNotesAlt2 = () => {
 
-          let noteObject = this.state.noteObject[this.state.staveIndex]
-
-          let noteDuration = this.state.noteDelay[this.state.staveIndex]
-          let timeNow = Tone.context.currentTime
-                console.log({noteObject})
-
-          noteObject.forEach((note,index) => {
-            let {noteString, noteScale} = note
-            let noteNum = NoteToNum(noteString) + Number(noteScale)*12;
-            console.log(timeNow, noteDuration[index],instrument,noteString );
-            this.midiSounds.playChordAt(timeNow, instrument, [noteNum], noteDuration[index])
-            timeNow = timeNow + noteDuration[index];
-          })
-          console.log(this.midiSounds);
-
-
-    }
     playNotesAlt = () => {
 
       // let noteObject = this.state.noteObject[this.state.staveIndex]
@@ -265,7 +241,7 @@ class notesRender extends Component {
 
     }
 
-    // notesClicked = () => {
+    notesClicked = () => {
 
       // synth.triggerAttackRelease(noteText[noteIndex], '8n')
       // let synth = new Tone.Synth().toMaster()
@@ -285,94 +261,46 @@ class notesRender extends Component {
 
       // console.clear();
 
-    //   transport.start();
+      transport.start();
 
-    //   setInterval(() => {
-    //     let {noteText} = this.state
+      setInterval(() => {
+        let {noteText} = this.state
 
-    //     if (noteIndex === noteText.length) {
-    //       console.log({noteIndex}, noteText.length)
-    //       transport.stop()
-    //       noteIndex = 0;
-    //     }
-    //   },10)
-
-
-    // }
-
-    // repeat = (time) =>  {
-    //   console.log({time})
-    //   let {noteText} = this.state
-    //   let {noteTone, duration} = noteText[noteIndex];
-    //   synth.triggerAttackRelease(noteTone, duration ,time )
-    //   // console.log({noteTone}, {noteIndex})
-    //   noteIndex++;
-
-    //   }
+        if (noteIndex === noteText.length) {
+          console.log({noteIndex}, noteText.length)
+          transport.stop()
+          noteIndex = 0;
+        }
+      },10)
 
 
-    // setTrasport = () => {
+    }
 
-    //   console.log('setting transport');
-    //   console.log(this.state.noteText[this.state.noteIndex])
-    //   transport.scheduleRepeat(time => {
-    //     this.repeat(time);
-    //   },'4n')
+    repeat = (time) =>  {
+      console.log({time})
+      let {noteText} = this.state
+      let {noteTone, duration} = noteText[noteIndex];
+      synth.triggerAttackRelease(noteTone, duration ,time )
+      // console.log({noteTone}, {noteIndex})
+      noteIndex++;
 
-    // }
+      }
+
+
+    setTrasport = () => {
+
+      console.log('setting transport');
+      console.log(this.state.noteText[this.state.noteIndex])
+      transport.scheduleRepeat(time => {
+        this.repeat(time);
+      },'4n')
+
+    }
 
     keyInputReceived = (e) => {
         console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ").");
-        
-        let {practice, currentStaveNotes, noteIndex} = this.state
-        let playedKey = e.note.name + e.note.octave
-        if (practice) {
-
-            let noteDetails = currentStaveNotes[noteIndex];
-            let noteDetails1 = noteDetails.split('')
-            let noteDetails2 = '';
-            noteDetails2 = noteDetails1[0] + noteDetails1[1] 
-            if (noteDetails1.length>2){
-                noteDetails2 = noteDetails1[0] + noteDetails1[2] +  noteDetails1[1]
-            } 
-
-            console.log({noteDetails2},{playedKey})
-
-            let noteId = 'note'+ String(noteIndex + 1);
-            let noteTextId = 'noteText'+ String(noteIndex + 1);
-            console.log({noteId},{noteTextId})
-            let noteBox = document.getElementById(noteId);
-            let noteTextBox = document.getElementById(noteTextId);
-      
-      
-
-      
-
-
-            
-            if (noteDetails2 ==  playedKey) {
-                console.log('correct key played')
-                // currentStaveNotes.shift()
-                noteIndex = noteIndex + 1;
-                noteTextBox.classList.add('correctNoteBox')
-                noteBox.classList.add('correctNoteBox')
-
-            } else {
-                noteBox.classList.add('wrongNoteBox')
-            }
-
-            window.setTimeout(() => {
-                noteBox.classList.remove('wrongNoteBox')
-                noteBox.classList.remove('correctNoteBox')
-              }, 200);
-
-        }
-
-
         this.setState({
-          playedKey: playedKey,
-          currentStaveNotes: currentStaveNotes,
-          noteIndex:  noteIndex,
+          playedKey: e.note.name + e.note.octave
         })
     }
     componentDidMount() {
@@ -392,7 +320,7 @@ class notesRender extends Component {
         // playnotes: true,
         // noteText: notesTone
       })
-    //   this.setTrasport();
+      this.setTrasport();
 
       WebMidi.enable( (err) => {
 
@@ -476,7 +404,7 @@ class notesRender extends Component {
         })
         this.showAllClicked();
       } else {
-        this.playNotesAlt2();
+        this.playNotesAlt();
         // this.setState({
         //   notesPlayEnded: false,
         // })
@@ -533,25 +461,7 @@ class notesRender extends Component {
       let {playNotes, staveIndex, noteObject, notesPlayEnded} = this.state
       // console.log({componentDidMount}, {staveIndex}, {noteObject});
       let noteWidth = window.innerWidth*.6/noteCount;
-      console.log({noteCount}, {noteWidth});
-      let noteKey =  note.split('-');
-      let noteDetails = noteKey[0].split('')
-      let noteLetter = noteDetails[0];
-      let noteOctave =  noteDetails[1];
-      let noteDuration = 'q';
-      if (noteKey.length>1) {
-         noteDuration = noteKey[1];
-      }
-      let noteAcc = ''
-      if (noteDetails.length > 2) {
-        noteAcc = noteDetails[2]
-      }
-      if (noteDetails.length>3) {
-          noteAcc = noteAcc + noteDetails[3]
-      }
-      //the below will go as input to singleNote2 component
-      let noteString = noteLetter + "/" + noteOctave + "/" + noteDuration + "/" + noteAcc
-      // console.log({noteString});
+      let noteKey =  note.split('-')[0];
       // let delayTime = 500*i;
       // if (componentDidMount) {
       //   console.log(noteObject[staveIndex]);
@@ -563,7 +473,7 @@ class notesRender extends Component {
 
       let {noteDelay} = this.state;
       let noteDelayForThis = [0,...noteDelay[staveIndex]];
-      // console.log({noteDelayForThis});
+      console.log({noteDelayForThis});
       let delaySoFar = 0;
       if (playNotes) {
 
@@ -573,27 +483,24 @@ class notesRender extends Component {
         }
       }
 
-      // console.log({i},{delaySoFar},{note});
+      console.log({i},{delaySoFar},{note});
 
       let {waitBeforeShow, notesVisibility} = this.state
       return(
         <div>
         <Delayed key={i} id={i} waitBeforeShow={delaySoFar*1000}>
             <div id = {'note' + i} className="noteBox">
-
             <Animated animationIn="fadeIn" animationOut="zoomOut" isVisible={notesVisibility}>
-              <SingleNote2
-                notes = {[noteString]}
-                noteCount = {noteCount}
+              <OneNoteVoice
+                noteTags = {note}
+                noteWidth = {noteWidth}
                 />
             </Animated>
             <Animated animationIn="flipInX" animationOut="zoomOut" isVisible={notesVisibility}>
                 <h2 id = {'noteText' + i} className="noteTextBox" onClick={() => this.setClassForNoteBG(i)}>
-                {noteKey[0]}
+                {noteKey}
                 </h2>
             </Animated>
-
-
 
             </div>
         </Delayed>
@@ -607,9 +514,7 @@ class notesRender extends Component {
             />
         }
         </Delayed>
-
         </div>
-
       )
     }
 
@@ -669,16 +574,14 @@ class notesRender extends Component {
       return(
         <div key={i} id={i} className="lineBox">
           <Animated animationIn="fadeIn" animationOut="zoomOut" isVisible={true}>
-          <div className="notesHeader">
-          {backButton}
             <h2 className="lyricBox">{lyric}</h2>
-          {frontButton}
-          </div>
           </Animated>
           <div className="notesContainter">
+            {backButton}
             {notesBox}
+            {frontButton}
           </div>
-          <PianoKeys/>
+
         </div>
       )
 
@@ -687,7 +590,7 @@ class notesRender extends Component {
 
     directionButtonClicked = (direction) => {
       // this.inputElement.focus();
-      let {staveIndex, showFrontButton, showBackButton, stavesCount, stave_notes} = this.state
+      let {staveIndex, showFrontButton, showBackButton, stavesCount} = this.state
 
       if (direction === 'front') {
         if (showFrontButton) {
@@ -724,7 +627,6 @@ class notesRender extends Component {
         playNotes: true,
         notesPlayEnded: false,
         noteClass: [],
-        currentStaveNotes: stave_notes[staveIndex].split(' '),
         // noteText: notesTone,
       })
 
@@ -818,56 +720,51 @@ class notesRender extends Component {
       let id = event.target.id
       if (id === 'practice') {
         this.setState({
-          firstTime:false,
-          playNotes:true,
+          firstTime:false, 
+          playNotes:true, 
           notesPlayEnded:false,
           showAll:false,
           scrollView:false,
           showFrontButton : true,
           showBackButton : false,
-          practice: true,
-          currentStaveNotes: this.state.stave_notes[this.state.staveIndex].split(' '),
         })
-
+  
       }
 
       if (id === 'showAll') {
         this.setState({
-          firstTime:false,
+          firstTime:false, 
           showAll:true,
-          playNotes:false,
+          playNotes:false, 
           notesPlayEnded:true,
           scrollView:false,
           showFrontButton : false,
           showBackButton : false,
-          practice: false,
         })
       }
 
       if (id === 'scroll') {
         this.setState({
-          firstTime:false,
+          firstTime:false, 
           scrollView:true,
-          playNotes:false,
+          playNotes:false, 
           notesPlayEnded:true,
           showAll:false,
           showFrontButton : false,
           showBackButton : false,
-          practice: false,
 
         })
       }
 
       if (id === 'backToTop') {
         this.setState({
-          firstTime:true,
+          firstTime:true, 
           scrollView:false,
-          playNotes:false,
+          playNotes:false, 
           notesPlayEnded:false,
           showAll:false,
           showFrontButton : false,
           showBackButton : false,
-          practice: false,
         })
       }
 
@@ -952,6 +849,30 @@ class notesRender extends Component {
                     }
                   </div>
                   }
+                  <SingleNote
+                    notes= {"C/4"}
+                    duration={"q"}
+                  />
+                  <SingleNote
+                    notes= {"C/5"}
+                    duration={"h"}
+                  />  
+                  <SingleNote
+                    notes= {"C/4"}
+                    duration={"w"}
+                  />
+                  <SingleNote
+                    notes= {"C/5"}
+                    duration={"h"}
+                  />
+                  <SingleNote
+                    notes= {"C/5"}
+                    duration={"8"}
+                  />                                          
+                  <SingleNote
+                    notes= {"C/4"}
+                    duration={"16"}
+                  />  
                   <h2>{this.state.playedKey}</h2>
                   <Animated  animationIn="fadeOut" animationOut="fadeOut" isVisible={false}>
                   <MIDISounds
@@ -1004,10 +925,3 @@ export default notesRender;
 // </Animated>
 
           // <button ref={(inp) => {this.inputElement = inp}} onKeyDown={(e) => this.notePressed(e)} >focus</button>
-
-          // <Animated animationIn="fadeIn" animationOut="zoomOut" isVisible={notesVisibility}>
-          //   <OneNoteVoice
-          //     noteTags = {note}
-          //     noteWidth = {noteWidth}
-          //     />
-          // </Animated>
