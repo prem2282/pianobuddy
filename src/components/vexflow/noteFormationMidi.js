@@ -8,10 +8,10 @@ const noteForMidiPlayer = (noteStr) => {
             //example 3: c4 (here no accidental)
             //example 4: d4b (here one accidental)
             //example 5: e5bb (here two accidental values)
-            console.log({noteStr});
+            // console.log({noteStr});
             let noteSplit = noteStr.split('-')
 
-            console.log({noteSplit});
+            // console.log({noteSplit});
             let noteArray = noteSplit[0].split('')
             let note = null;
             let duration = '4n';

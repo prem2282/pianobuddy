@@ -18,6 +18,9 @@ import Tone from 'tone';
 import NoteFormation from './noteFormation';
 import NoteForTone from './noteForTone';
 import NoteForMidiPlayer from './noteForMidiPlayer';
+import SingleNote from './singlenote';
+import Clefandtime from './clefandtime';
+
 // import WebAudio from './webAudioFontDemo';
 import NoteToNum from './noteToNum';
 
@@ -76,6 +79,7 @@ class notesRender extends Component {
             notesPlayEnded: false,
             time: 0,
             scrollView: false,
+            playedKey: '',
         };
     };
 
@@ -323,6 +327,20 @@ class notesRender extends Component {
           console.log("WebMidi", WebMidi);
          input = WebMidi.inputs[0];
          output = WebMidi.outputs[0];
+          //http://djipco.github.io/webmidi/latest/classes/WebMidi.html
+         if (input) {
+          // WebMidi.inputs[0].addListener('noteOn', "all", function(e) {
+          //   console.log("note value: " + e.value);
+          // });
+          input.addListener('noteon', 'all',
+             function (e) {
+            console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ").");
+            this.setState({
+              playedKey: e.note.name + e.note.octave
+            })
+        }
+    );
+         }
          if (output) {
            output.playNote("C4");
          } else {
@@ -676,25 +694,25 @@ class notesRender extends Component {
         showBackbutton:false,
       })
     }
-    playTestInstrument = () => {
-      console.clear();
-      // this.midiSounds.playChordNow(3, [65], 2.5);
-      let duration = 2.5;
-      let instrument = 771;
+    // playTestInstrument = () => {
+    //   console.clear();
+    //   // this.midiSounds.playChordNow(3, [65], 2.5);
+    //   let duration = 2.5;
+    //   let instrument = 771;
 
-      for (let i = 0; i < this.midiSounds.player.loader.instrumentKeys().length; i++) {
-          console.log( '' + (i + 0) + '. ' + this.midiSounds.player.loader.instrumentInfo(i).title );
-      }
+    //   for (let i = 0; i < this.midiSounds.player.loader.instrumentKeys().length; i++) {
+    //       console.log( '' + (i + 0) + '. ' + this.midiSounds.player.loader.instrumentInfo(i).title );
+    //   }
 
-      // {'' + (i + 0) + '. ' + this.midiSounds.player.loader.instrumentInfo(i).title}
+    //   // {'' + (i + 0) + '. ' + this.midiSounds.player.loader.instrumentInfo(i).title}
 
 
-      let time = Tone.context.currentTime
-      this.midiSounds.playChordAt(time + 1, instrument, [60], duration)
-      this.midiSounds.playChordAt(time + 2, instrument, [60], duration)
-      this.midiSounds.playChordAt(time + 3, instrument, [60], duration)
-      console.log(this.midiSounds);
-    }
+    //   let time = Tone.context.currentTime
+    //   this.midiSounds.playChordAt(time + 1, instrument, [60], duration)
+    //   this.midiSounds.playChordAt(time + 2, instrument, [60], duration)
+    //   this.midiSounds.playChordAt(time + 3, instrument, [60], duration)
+    //   console.log(this.midiSounds);
+    // }
 
     resetSwitches = (event) => {
       let id = event.target.id
@@ -829,7 +847,31 @@ class notesRender extends Component {
                     }
                   </div>
                   }
-
+                  <SingleNote
+                    notes= {"C/4"}
+                    duration={"q"}
+                  />
+                  <SingleNote
+                    notes= {"C/5"}
+                    duration={"h"}
+                  />  
+                  <SingleNote
+                    notes= {"C/4"}
+                    duration={"w"}
+                  />
+                  <SingleNote
+                    notes= {"C/5"}
+                    duration={"h"}
+                  />
+                  <SingleNote
+                    notes= {"C/5"}
+                    duration={"8"}
+                  />                                          
+                  <SingleNote
+                    notes= {"C/4"}
+                    duration={"16"}
+                  />  
+                  <h2>{this.state.playedKey}</h2>
                   <Animated  animationIn="fadeOut" animationOut="fadeOut" isVisible={false}>
                   <MIDISounds
                           ref={(ref) => (this.midiSounds = ref)}

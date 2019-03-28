@@ -18,7 +18,7 @@ const NoteForTone = (stave_note) => {
         duration = '8n'
         break;
       }
-      console.log({noteTone} ,{duration})
+      // console.log({noteTone} ,{duration})
       return(
         {noteTone, duration}
       )
