@@ -10,7 +10,7 @@ import OneNoteSound from "./oneNoteSound";
 import Delayed from '../..//components/common/delayed';
 import './notes.css';
 import {Animated} from 'react-animated-css';
-import {Button} from 'antd';
+import {Button,Alert} from 'antd';
 import ReactDOM from 'react-dom';
 import WebMidi from 'webmidi';
 import MIDI from 'midi.js'; 
@@ -85,6 +85,9 @@ class notesRender extends Component {
             scrollView: false,
             playedKey: '',
             practice: false,
+            webMidiEnabled: false,
+            keyPressed: false,
+
         };
     };
 
@@ -344,11 +347,6 @@ class notesRender extends Component {
             let noteBox = document.getElementById(noteId);
             let noteTextBox = document.getElementById(noteTextId);
       
-      
-
-      
-
-
             
             if (noteDetails2 ==  playedKey) {
                 console.log('correct key played')
@@ -357,12 +355,12 @@ class notesRender extends Component {
                 noteTextBox.classList.add('correctNoteBox')
                 noteBox.classList.add('correctNoteBox')
 
-                if (noteIndex = currentStaveNotes.length) {
+                if (noteIndex === currentStaveNotes.length) {
                   noteIndex = 0;
 
                   
                 }
-
+                console.log({noteIndex})
 
             } else {
                 noteBox.classList.add('wrongNoteBox')
@@ -380,7 +378,101 @@ class notesRender extends Component {
           playedKey: playedKey,
           currentStaveNotes: currentStaveNotes,
           noteIndex:  noteIndex,
+          keyPressed: true,
         })
+    }
+
+    playMidiNote = (index,delayTime) => {
+
+      let {currentStaveNotes, staveIndex, noteDelay} = this.state
+
+      let noteDuration = noteDelay[staveIndex][index]*1000
+      console.log(noteDuration);
+      
+      let noteDetails = currentStaveNotes[index-1];
+      let noteDetails1 = noteDetails.split('');
+      let noteKey = noteDetails1[0] + noteDetails1[1] 
+      if (noteDetails1.length>2){
+        noteKey = noteDetails1[0] + noteDetails1[2] +  noteDetails1[1]
+      } 
+      delayTime = "+" + delayTime
+      console.log({noteKey})
+      output.playNote(noteKey, 4, {duration:noteDuration, time:delayTime});
+      
+      let notesCount = currentStaveNotes.length
+      console.log({index}, {notesCount});
+      if (index  === notesCount) {
+        console.log("all notes done");
+        this.setState({
+          notesPlayEnded: true,
+        })
+      }
+
+
+
+    }
+
+
+    checkForMidi = () => {
+      console.clear();
+      console.log("checking for midi")
+
+      let {webMidiEnabled} = this.state
+      WebMidi.enable( (err) => {
+
+        if (err) {
+
+          if (webMidiEnabled) {
+            alert('Midi Device Lost');
+            this.setState({
+              webMidiEnabled: false
+            })
+          }
+
+          console.log("WebMidi could not be enabled.", err);
+        } else {
+          console.log("WebMidi enabled!");
+          console.log(WebMidi.inputs);
+          console.log(WebMidi.outputs);
+          
+
+          if (!webMidiEnabled && WebMidi.outputs.length > 0) {
+            console.log("output found");
+            this.setState({
+              webMidiEnabled: true,
+            })
+          }
+
+          if (webMidiEnabled && WebMidi.outputs.length === 0) {
+            console.log("output not found");
+            this.setState({
+              webMidiEnabled: false,
+            })
+          }
+
+
+          console.log("WebMidi", WebMidi);
+         input = WebMidi.inputs[0];
+         output = WebMidi.outputs[0];
+          //http://djipco.github.io/webmidi/latest/classes/WebMidi.html
+         if (input) {
+          // WebMidi.inputs[0].addListener('noteOn', "all", function(e) {
+          //   console.log("note value: " + e.value);
+          // });
+          input.addListener('noteon', 'all',
+            ((e) => {this.keyInputReceived(e)})
+         )
+        }
+         if (output) {
+           output.playNote("C4","all", {duration:500});
+         } else {
+
+         }
+        }
+
+
+
+      });
     }
     componentDidMount() {
 
@@ -401,37 +493,7 @@ class notesRender extends Component {
       })
     //   this.setTrasport();
 
-      WebMidi.enable( (err) => {
 
-        if (err) {
-          console.log("WebMidi could not be enabled.", err);
-        } else {
-          console.log("WebMidi enabled!");
-          console.log(WebMidi.inputs);
-          console.log(WebMidi.outputs);
-
-          console.log("WebMidi", WebMidi);
-         input = WebMidi.inputs[0];
-         output = WebMidi.outputs[0];
-          //http://djipco.github.io/webmidi/latest/classes/WebMidi.html
-         if (input) {
-          // WebMidi.inputs[0].addListener('noteOn', "all", function(e) {
-          //   console.log("note value: " + e.value);
-          // });
-          input.addListener('noteon', 'all',
-            ((e) => {this.keyInputReceived(e)})
-         )
-        }
-         if (output) {
-           output.playNote("C4");
-         } else {
-
-         }
-        }
-
-
-
-      });
     }
 
     setClassForNoteBG = (i) => {
@@ -521,6 +583,12 @@ class notesRender extends Component {
             case "qr":
               noteCount = noteCount +  1
               break;
+            case "8":
+              noteCount = noteCount +  .5
+              break;
+            case "16":
+            noteCount = noteCount +  .25
+              break;
             default:
 
           }
@@ -537,7 +605,8 @@ class notesRender extends Component {
       // let {noteClass} = this.state
 
       // className="noteBox " + {noteClass[i]}
-      let {playNotes, staveIndex, noteObject, notesPlayEnded} = this.state
+      let {playNotes, staveIndex, notesPlayEnded, webMidiEnabled, noteDelay} = this.state
+
       // console.log({componentDidMount}, {staveIndex}, {noteObject});
       let noteWidth = window.innerWidth*.6/noteCount;
       console.log({noteCount}, {noteWidth});
@@ -558,19 +627,11 @@ class notesRender extends Component {
       }
       //the below will go as input to singleNote2 component
       let noteString = noteLetter + "/" + noteOctave + "/" + noteDuration + "/" + noteAcc
-      // console.log({noteString});
-      // let delayTime = 500*i;
-      // if (componentDidMount) {
-      //   console.log(noteObject[staveIndex]);
-      //   let noteDuration = noteObject[staveIndex][i-1].noteDuration;
-      //   delayTime = Tone.Time(noteDuration)*1000;
-      // }
 
-      // console.log({delayTime});
 
-      let {noteDelay} = this.state;
+      // let {noteDelay} = this.state;
       let noteDelayForThis = [0,...noteDelay[staveIndex]];
-      // console.log({noteDelayForThis});
+
       let delaySoFar = 0;
       if (playNotes) {
 
@@ -580,12 +641,19 @@ class notesRender extends Component {
         }
       }
 
+      let delayToApply = delaySoFar*1000
+
+      if (webMidiEnabled & !notesPlayEnded) {
+        this.playMidiNote(i,delayToApply)
+      }
+
+
       // console.log({i},{delaySoFar},{note});
 
       let {waitBeforeShow, notesVisibility} = this.state
       return(
         <div>
-        <Delayed key={i} id={i} waitBeforeShow={delaySoFar*1000}>
+        <Delayed key={i} id={i} waitBeforeShow={delayToApply}>
             <div id = {'note' + i} className="noteBox">
 
             <Animated animationIn="fadeIn" animationOut="zoomOut" isVisible={notesVisibility}>
@@ -604,16 +672,16 @@ class notesRender extends Component {
 
             </div>
         </Delayed>
-        <Delayed key={'tone'+i} id={'tone'+i} waitBeforeShow={delaySoFar*1000}>
-        {notesPlayEnded?
+        {(notesPlayEnded || webMidiEnabled)?
           null
           :
+          <Delayed key={'tone'+i} id={'tone'+i} waitBeforeShow={delaySoFar*1000}>
           <OneNoteSound
             noteIndex = {i}
             playThisNote = {this.playThisNote}
             />
+          </Delayed>
         }
-        </Delayed>
 
         </div>
 
@@ -730,7 +798,9 @@ class notesRender extends Component {
         showLine: true,
         playNotes: true,
         notesPlayEnded: false,
+        noteIndex: 0,
         noteClass: [],
+        keyPressed: false,
         currentStaveNotes: stave_notes[staveIndex].split(' '),
         // noteText: notesTone,
       })
@@ -834,6 +904,7 @@ class notesRender extends Component {
           showBackButton : false,
           practice: true,
           currentStaveNotes: this.state.stave_notes[this.state.staveIndex].split(' '),
+          keyPressed: false,
         })
 
       }
@@ -848,6 +919,7 @@ class notesRender extends Component {
           showFrontButton : false,
           showBackButton : false,
           practice: false,
+          keyPressed: false,
         })
       }
 
@@ -861,7 +933,7 @@ class notesRender extends Component {
           showFrontButton : false,
           showBackButton : false,
           practice: false,
-
+          keyPressed: false,
         })
       }
 
@@ -875,6 +947,7 @@ class notesRender extends Component {
           showFrontButton : false,
           showBackButton : false,
           practice: false,
+          keyPressed: false,
         })
       }
 
@@ -885,9 +958,16 @@ class notesRender extends Component {
     }
     render() {
 
+
+
         let {showAll, stave_notes, staveIndex, showButtonText, refresh, scrollView,
-           showLine, noteText, notesPlayed, playNotes, firstTime, notesVisibility, time} = this.state
-        // let stave_note = stave_notes[0].split(',')
+           showLine, noteText, notesPlayed, playNotes, firstTime, notesVisibility, time, webMidiEnabled} = this.state
+        
+        
+        if (!webMidiEnabled) {
+          this.checkForMidi()
+        }
+           // let stave_note = stave_notes[0].split(',')
 
         // if (!notesVisibility) {
         //   this.setState({
