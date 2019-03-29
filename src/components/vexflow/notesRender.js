@@ -31,7 +31,7 @@ import NoteToNum from './noteToNum';
 let input = null;
 let output = null;
 let context = new AudioContext();
-let instrument = 771;
+let instrument = 3;
 let noteIndex = 0;
 let synth = new Tone.Synth().toMaster()
 let transport = Tone.Transport;
@@ -356,6 +356,13 @@ class notesRender extends Component {
                 noteIndex = noteIndex + 1;
                 noteTextBox.classList.add('correctNoteBox')
                 noteBox.classList.add('correctNoteBox')
+
+                if (noteIndex = currentStaveNotes.length) {
+                  noteIndex = 0;
+
+                  
+                }
+
 
             } else {
                 noteBox.classList.add('wrongNoteBox')
