@@ -437,14 +437,22 @@ class notesRender extends Component {
           
 
           if (!webMidiEnabled && WebMidi.outputs.length > 0) {
+            alert('midi device connected', WebMidi.outputs);
             console.log("output found");
             this.setState({
               webMidiEnabled: true,
             })
           }
 
+          if (WebMidi.outputs.length === 0){
+            console.log("output not found");
+            alert('midi device not found', WebMidi.outputs)
+
+          }
+
           if (webMidiEnabled && WebMidi.outputs.length === 0) {
             console.log("output not found");
+            alert('midi device not found')
             this.setState({
               webMidiEnabled: false,
             })
@@ -963,10 +971,8 @@ class notesRender extends Component {
         let {showAll, stave_notes, staveIndex, showButtonText, refresh, scrollView,
            showLine, noteText, notesPlayed, playNotes, firstTime, notesVisibility, time, webMidiEnabled} = this.state
         
-        
-        if (!webMidiEnabled) {
-          this.checkForMidi()
-        }
+           this.checkForMidi()
+
            // let stave_note = stave_notes[0].split(',')
 
         // if (!notesVisibility) {
