@@ -19,9 +19,8 @@ import Tone from 'tone';
 import NoteFormation from './noteFormation';
 import NoteForTone from './noteForTone';
 import NoteForMidiPlayer from './noteForMidiPlayer';
-import SingleNote from './singleNote';
+import SingleNote from './singleNote2';
 import PianoKeys from './pianoKeys';
-
 
 // import WebAudio from './webAudioFontDemo';
 import NoteToNum from './noteToNum';
