@@ -918,7 +918,7 @@ class notesRender extends Component {
                       :null
                     }
                     {allNotesCompleted?
-                      <Animated  animationIn="bounceIn" animationOut="bounceOut" isVisible={choiceVisibility}>
+                      <Animated  animationIn="zoomIn" animationOut="bounceOut" isVisible={choiceVisibility}>
                         <div className="choiceContainer">
                           <div className="whiteKeyChoice" onClick={() => this.processLineSelection(true,'onScreen')}>
                             Redo
