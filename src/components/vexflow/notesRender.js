@@ -25,7 +25,7 @@ import PianoKeys from './pianoKeys';
 // import WebAudio from './webAudioFontDemo';
 import NoteToNum from './noteToNum';
 
-let whiteKeys = [1,3,5,6,8,10,12];
+let whiteKeys = [0,2,4,5,7,9,11];
 let input = null;
 let output = null;
 let context = new AudioContext();
@@ -400,7 +400,7 @@ class notesRender extends Component {
 
     processLineSelection = (selectedChoice,source) => {
 
-      let {noteClass,notesVisibility,keyInputDetails} = this.state
+      // let {noteClass,notesVisibility,keyInputDetails} = this.state
       //WhiteKey Pressed - Repeat Same line
       //BlackKey Pressed - Go to Next line
       let repeatSameLine = true;
@@ -410,6 +410,8 @@ class notesRender extends Component {
       //BlackKey Pressed - Go to Next line
         let keyNumber = selectedChoice.note.number % 12
         let keyIndex = whiteKeys.indexOf(keyNumber)
+        console.log({keyNumber}, {keyIndex})
+        console.log({selectedChoice})
         //if keyIndex is -1 then it is not a whitekey
         //so blackkey is pressed. if black key is pressed set the repeatSameLine to False
         if (keyIndex < 0) {
@@ -425,19 +427,24 @@ class notesRender extends Component {
 
       this.setState({
         choiceVisibility: false,
+        keyInputDetails:selectedChoice,
       })
 
       window.setTimeout(() => {
-        this.setState({
-          notesVisibility: true,
-          keyInputDetails: null,
-          noteClass : [],
-          allNotesCompleted: false,
-          choiceVisibility: true,
-        })
   
         if (!repeatSameLine) {
          this.directionButtonClicked('front') 
+        } else {
+          this.setState({
+            notesVisibility: true,
+            keyInputDetails: null,
+            noteClass : [],
+            allNotesCompleted: false,
+            choiceVisibility: true,
+            notesPlayEnded: false,
+            keyInputDetails: selectedChoice,
+          })
+  
         }
       }, 1000);
 
@@ -718,6 +725,8 @@ class notesRender extends Component {
         noteIndex: 0,
         noteClass: [],
         currentStaveNotes: noteObject[staveIndex],
+        notesVisibility: true,
+        choiceVisibility: true,
       })
 
     }
@@ -761,6 +770,8 @@ class notesRender extends Component {
         showButtonText: showButtonText,
         lineBoxText: lineBoxText,
         refresh: false,
+
+        
         // showPage: false,
       })
 
