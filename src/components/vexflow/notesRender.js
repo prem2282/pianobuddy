@@ -26,7 +26,7 @@ import PianoKeys from './pianoKeys';
 // import WebAudio from './webAudioFontDemo';
 import NoteToNum from './noteToNum';
 
-
+let whiteKeys = [1,3,5,6,8,10,12];
 let input = null;
 let output = null;
 let context = new AudioContext();
@@ -74,6 +74,7 @@ class notesRender extends Component {
             noteText:noteText,
             noteObject: noteObject,
             notesVisibility:true,
+            choiceVisibility:true,
             componentDidMount: false,
             noteDelay: noteDelay,
             firstTime:true,
@@ -85,43 +86,13 @@ class notesRender extends Component {
             playedKey: '',
             practice: false,
             webMidiEnabled: false,
-            keyPressed: false,
+            allNotesCompleted: false,
+            allLinesCompleted: false,
 
         };
     };
 
 
-
-
-    playNotesOld = () => {
-
-      let noteObject = this.state.noteObject[this.state.staveIndex]
-      console.log({noteObject})
-
-      let time = Tone.context.currentTime;
-      console.log('AudiocontextTime:',context.currentTime)
-      console.log("currentTime", time);
-      // let instrument = 3;
-      noteObject.forEach((note,index) => {
-
-
-        let {noteString, noteScale, noteDuration} = note;
-        console.log({noteDuration});
-        let noteNum = NoteToNum(noteString) + noteScale*12;
-        // let {noteTone, duration} = note;
-        // let noteNum = NoteNumMap(noteTone);
-        let duration = Tone.Time(noteDuration);
-
-        console.log(noteNum, time, instrument, duration );
-        // synth.triggerAttackRelease(noteTone, duration, Tone.context.currentTime + time )
-
-        this.midiSounds.playChordAt(time, instrument, [noteNum], duration)
-        // time = time + Tone.Time(duration)
-        time = time + duration
-
-      })
-
-    }
     playNotes = () => {
 
       // console.clear()
@@ -192,18 +163,8 @@ class notesRender extends Component {
     }
     playNotesAlt = () => {
 
-      // let noteObject = this.state.noteObject[this.state.staveIndex]
-      // console.log({noteObject})
-      // console.clear()
-
-
-      // let time = Tone.context.currentTime;
-      // console.log("currentTime", time);
-      // let instrument = 3;
       let noteObject = this.state.noteObject[this.state.staveIndex]
       console.log({noteObject})
-      // let noteText = this.state.noteText[this.state.staveIndex]
-      // console.log({noteText})
 
       let time = Tone.context.currentTime;
 
@@ -213,8 +174,7 @@ class notesRender extends Component {
         let {noteString, noteScale, noteDuration} = note;
         let duration = Tone.Time(noteDuration);
         let noteNum = NoteToNum(noteString) + noteScale*12;
-        // let {noteTone, duration} = note;
-        // synth.triggerAttackRelease(noteTone, duration, Tone.context.currentTime + time )
+
         this.midiSounds.playChordAt(time, instrument, [noteNum], duration)
         this.setState({
           // playNotes: false,
@@ -227,76 +187,33 @@ class notesRender extends Component {
 
     }
 
-    // notesClicked = () => {
-
-      // synth.triggerAttackRelease(noteText[noteIndex], '8n')
-      // let synth = new Tone.Synth().toMaster()
-      // noteText.map((note,index)=> {
-      //   console.log({note},{index})
-      //   console.log(index/2 + 1)
-      //   synth.triggerAttackRelease(note, 1,index+1)
-      // })
-
-      // synth.triggerAttackRelease(noteText[0], .25,.5)
-      // synth.triggerAttackRelease(noteText[1], .25,1)
-      // synth.triggerAttackRelease(noteText[2], .25,1.5)
-      // synth.triggerAttackRelease(noteText[3], .25,2)
-      // this.setState({
-      //   noteIndex: noteIndex + 1
-      // })
-
-      // console.clear();
-
-    //   transport.start();
-
-    //   setInterval(() => {
-    //     let {noteText} = this.state
-
-    //     if (noteIndex === noteText.length) {
-    //       console.log({noteIndex}, noteText.length)
-    //       transport.stop()
-    //       noteIndex = 0;
-    //     }
-    //   },10)
-
-
-    // }
-
-    // repeat = (time) =>  {
-    //   console.log({time})
-    //   let {noteText} = this.state
-    //   let {noteTone, duration} = noteText[noteIndex];
-    //   synth.triggerAttackRelease(noteTone, duration ,time )
-    //   // console.log({noteTone}, {noteIndex})
-    //   noteIndex++;
-
-    //   }
-
-
-    // setTrasport = () => {
-
-    //   console.log('setting transport');
-    //   console.log(this.state.noteText[this.state.noteIndex])
-    //   transport.scheduleRepeat(time => {
-    //     this.repeat(time);
-    //   },'4n')
-
-    // }
 
     keyInputReceived = (e) => {
         console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ").");
         console.log("key details:", e)
         
-        let {practice, keyInputDetails} = this.state
+        let {practice, keyInputDetails, allNotesCompleted,allLinesCompleted, staveIndex, stavesCount} = this.state
         
+
+      if (e !== keyInputDetails) {
+
         if (practice) {
-            if (e === keyInputDetails) {
-              //samekeypress. just coming due to rerender
+            
+          if (allLinesCompleted) {
+
+          } else {
+
+            if (allNotesCompleted) {
+              this.processLineSelection(e, 'onDevice');
             } else {
-              this.setClassForNoteBG(e);
+              this.setClassForNoteBG(e,'onDevice');
             }
+          }
 
         }
+
+      }
+
 
 
     }
@@ -411,42 +328,120 @@ class notesRender extends Component {
 
     }
 
-    setClassForNoteBG = (keyInputDetails) => {
+    bringNextScreen = () => {
 
+      let {staveIndex, stavesCount, allLinesCompleted} = this.state
 
-      let playedNote = keyInputDetails.note.name + keyInputDetails.note.octave
+      if (stavesCount === (staveIndex+1)) {
+        allLinesCompleted = true;
+      }
+
+      window.setTimeout(() => {
+        
+        this.setState ({
+          allNotesCompleted: true,
+          allLinesCompleted: allLinesCompleted,
+        })
+      }, 1000);
+
+    }
+
+    setClassForNoteBG = (keyInputDetails,source) => {
+
+      let playedNote = ''
       let {noteClass, staveIndex, noteObject} = this.state;
       let noteNumToCheck = noteClass.length;
       let noteToCheck = noteObject[staveIndex][noteNumToCheck].noteString + noteObject[staveIndex][noteNumToCheck].noteScale
-      // let clickedNote = noteObject[staveIndex][i-1].noteString
-      // let clickedNote = playedNote;
-      // let noteToCheckScale = noteObject[staveIndex][noteNumToCheck].noteScale
-      // let clickedNoteScale = noteObject[staveIndex][i-1].noteScale
+
+      if (source === 'onScreen') {
+        playedNote = noteObject[staveIndex][keyInputDetails-1].noteString + noteObject[staveIndex][keyInputDetails-1].noteScale
+      } else {
+        playedNote = keyInputDetails.note.name + keyInputDetails.note.octave
+      }
+
+
       let noteId = "note" + (noteNumToCheck+1)
       let noteTextId = "noteText" + (noteNumToCheck+1)
       let noteBox = document.getElementById(noteId);
       let noteTextBox = document.getElementById(noteTextId);
 
       console.log({noteToCheck}, {playedNote});
-
+      let allNotesCompleted = false;
       if (noteToCheck === playedNote) {
+              if (noteNumToCheck+1 === this.state.currentStaveNotes.length) {
+                allNotesCompleted = true
+                this.setState({
+                  notesVisibility: false,
+                })
+              }
               noteTextBox.classList.add('correctNoteBox')
               noteBox.classList.add('correctNoteBox')
               noteClass.push('correctNoteBox')
               this.setState({
                 noteClass: noteClass,
                 keyInputDetails: keyInputDetails,
+                allNotesCompleted: false,
               })
       } else {
               noteBox.classList.add('wrongNoteBox')
       }
 
+      if (allNotesCompleted) {
 
+        this.bringNextScreen();
+
+      }
 
       window.setTimeout(() => {
         noteBox.classList.remove('wrongNoteBox')
         noteBox.classList.remove('correctNoteBox')
       }, 200);
+
+    }
+
+    processLineSelection = (selectedChoice,source) => {
+
+      let {noteClass,notesVisibility,keyInputDetails} = this.state
+      //WhiteKey Pressed - Repeat Same line
+      //BlackKey Pressed - Go to Next line
+      let repeatSameLine = true;
+
+      if (source === 'onDevice') {
+      //WhiteKey Pressed - Repeat Same line
+      //BlackKey Pressed - Go to Next line
+        let keyNumber = selectedChoice.note.number % 12
+        let keyIndex = whiteKeys.indexOf(keyNumber)
+        //if keyIndex is -1 then it is not a whitekey
+        //so blackkey is pressed. if black key is pressed set the repeatSameLine to False
+        if (keyIndex < 0) {
+          repeatSameLine = false;
+        }
+        
+
+      } else {
+      //0 - Repeat Same line
+      //1 - Go to Next line
+        repeatSameLine = selectedChoice;
+      }
+
+      this.setState({
+        choiceVisibility: false,
+      })
+
+      window.setTimeout(() => {
+        this.setState({
+          notesVisibility: true,
+          keyInputDetails: null,
+          noteClass : [],
+          allNotesCompleted: false,
+          choiceVisibility: true,
+        })
+  
+        if (!repeatSameLine) {
+         this.directionButtonClicked('front') 
+        }
+      }, 1000);
+
 
     }
 
@@ -579,14 +574,14 @@ class notesRender extends Component {
         <Delayed key={i} id={i} waitBeforeShow={delayToApply}>
             <div id = {'note' + i} className="noteBox">
 
-            <Animated animationIn="fadeIn" animationOut="zoomOut" isVisible={notesVisibility}>
+            <Animated animationIn="fadeIn" animationOut="bounceOut" isVisible={notesVisibility}>
               <SingleNote
                 notes = {[noteString]}
                 noteCount = {noteCount}
                 />
             </Animated>
-            <Animated animationIn="flipInX" animationOut="zoomOut" isVisible={notesVisibility}>
-                <h2 id = {'noteText' + i} className="noteTextBox" onClick={() => this.setClassForNoteBG(i)}>
+            <Animated animationIn="flipInX" animationOut="bounceOut" isVisible={notesVisibility}>
+                <h2 id = {'noteText' + i} className="noteTextBox" onClick={() => this.setClassForNoteBG(i,'onScreen')}>
                 {noteKey[0]}
                 </h2>
             </Animated>
@@ -719,9 +714,10 @@ class notesRender extends Component {
         showLine: true,
         playNotes: true,
         notesPlayEnded: false,
+        allNotesCompleted: false,
+        allLinesCompleted: false,
         noteIndex: 0,
         noteClass: [],
-        keyPressed: false,
         currentStaveNotes: noteObject[staveIndex],
       })
 
@@ -824,7 +820,6 @@ class notesRender extends Component {
           showBackButton : false,
           practice: true,
           currentStaveNotes: this.state.noteObject[this.state.staveIndex],
-          keyPressed: false,
         })
 
       }
@@ -839,7 +834,6 @@ class notesRender extends Component {
           showFrontButton : false,
           showBackButton : false,
           practice: false,
-          keyPressed: false,
         })
       }
 
@@ -853,7 +847,6 @@ class notesRender extends Component {
           showFrontButton : false,
           showBackButton : false,
           practice: false,
-          keyPressed: false,
         })
       }
 
@@ -867,7 +860,6 @@ class notesRender extends Component {
           showFrontButton : false,
           showBackButton : false,
           practice: false,
-          keyPressed: false,
         })
       }
 
@@ -880,25 +872,14 @@ class notesRender extends Component {
 
 
 
-        let {showAll, stave_notes, staveIndex, showButtonText, refresh, scrollView,
-           showLine, noteText, notesPlayed, playNotes, firstTime, notesVisibility, time, webMidiEnabled} = this.state
+        let {showAll, stave_notes, staveIndex, showButtonText, refresh, scrollView, allNotesCompleted, allLinesCompleted,
+           showLine, noteText, notesPlayed, playNotes, firstTime, notesVisibility,choiceVisibility, time, webMidiEnabled} = this.state
         
            this.checkForMidi()
 
-           // let stave_note = stave_notes[0].split(',')
 
-        // if (!notesVisibility) {
-        //   this.setState({
-        //     notesVisibility: true
-        //   })
-        // }
-
-        // if (playNotes){
-        //   this.playNotesAlt();
-        // }
         let header = (
           <div className="notesHeaderBox">
-            {/* <h4 onClick={this.playNotes}>click</h4> */}
             <h4 id='backToTop' onClick={this.backToTop}>back</h4>
             <h1 className="notesHeaderText">{this.state.notes_title}</h1>
             {/* <h2 className="notesHeaderText" onClick={() => this.showAllClicked()}> {showButtonText} </h2> */}
@@ -908,17 +889,6 @@ class notesRender extends Component {
 
 
 
-      // if (!componentDidMount) {
-      //   return(
-      //     <div>
-      //     <MIDISounds
-      //             ref={(ref) => (this.midiSounds = ref)}
-      //             appElementName="root" instruments={[3,771]}
-      //             isVisible={false}
-      //             />
-      //     </div>
-      //   )
-      // } else {
         return (
               <div className="notesPage">
                   {header}
@@ -941,11 +911,27 @@ class notesRender extends Component {
                       :
                       null
                     }
-                    {playNotes?
+                    {playNotes && !allNotesCompleted?
                       <Animated  animationIn="fadeIn" animationOut="fadeInRight" isVisible={showLine}>
                           {this.lineBox(stave_notes[staveIndex],staveIndex)}
                       </Animated>
                       :null
+                    }
+                    {allNotesCompleted?
+                      <Animated  animationIn="bounceIn" animationOut="bounceOut" isVisible={choiceVisibility}>
+                        <div className="choiceContainer">
+                          <div className="whiteKeyChoice" onClick={() => this.processLineSelection(true,'onScreen')}>
+                            Redo
+                          </div>
+                          <div className="blackKeyChoice" onClick={() => this.processLineSelection(false,'onScreen')}>
+                           Next  
+                          </div>
+                         
+                          
+                        </div>
+                      </Animated>
+                      :
+                      null
                     }
                     {scrollView?
                       <ScrollView
@@ -955,6 +941,7 @@ class notesRender extends Component {
                       null
 
                     }
+
                   </div>
                   }
                   <h2>{this.state.playedKey}</h2>
