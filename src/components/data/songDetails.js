@@ -1,6 +1,7 @@
-const SongList = [
+const SongDetails = [
 
-    {
+    {   
+        id: 1,
         title: 'Mouna Ragam Theme Music',
         notes: [
             'D5# G4 G4# G4 D5 G4 D5# G4',
@@ -20,4 +21,4 @@ const SongList = [
     }
 ]
 
-export default SongList;
+export default SongDetails;

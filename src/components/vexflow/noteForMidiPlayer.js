@@ -3,9 +3,9 @@ import NoteFormationMidi from './noteFormationMidi';
 const NoteForMidi = (stave_note) => {
     let notes = stave_note.split(' ');
     let notesTone = notes.map((note) => {
-      let {noteString,noteScale, noteDuration} = NoteFormationMidi(note)
+      let noteObject = NoteFormationMidi(note)
       return(
-        {noteString, noteScale, noteDuration}
+        noteObject
       )
 
     })

@@ -1,8 +1,9 @@
 
+
 import Vex from 'vexflow';
 import React, {Component} from 'react';
 import './scroll.css'
-import NoteFormation from './noteFormation';
+import NoteFormation from './noteFormationNew';
 import NoteForTone from './noteForTone';
 import MIDISounds from 'midi-sounds-react';
 import {Animated} from 'react-animated-css';
@@ -54,26 +55,26 @@ export default class ScrollView2 extends Component {
     initializeNotes = () => {
       // var durations = ['8', '4', '2', '1'];
 
-      let input =  this.props.notes;
-
-      let noteTags = input.split(' ')
-      // console.log({noteTags})
+      // let input =  this.props.notes;
+        //  let noteObjects = ...this.props.notes;
+      // let noteTags = input.split(' ')
+      // console.log({noteObjects})
       // let noteText = noteTags.map((stave_note) => { return NoteForTone(stave_note).noteTone});
 
-      let notes = noteTags.map(noteTag => {
-        return this.noteFormation(noteTag).note
+      let notes = this.props.notes.map(noteObject => {
+        return this.noteFormation(noteObject).note
       })
 
-      
+      console.log({notes});
 
       tickContext.preFormat().setX(700);
       this.setState({
         notes : notes,
         scrollStarted: false,
-        noteTags: noteTags,
-        noteCurrent: noteTags[0],
+        noteObjects: [...this.props.notes],
+        noteCurrent: this.props.notes[0].noteString,
       })
-      noteTags.shift()
+      // noteObjects.shift()
     }
     componentDidMount() {
 
@@ -82,7 +83,7 @@ export default class ScrollView2 extends Component {
         this.initializeNotes();
         console.log("initializeNotes done");
         this.refs.outer.appendChild(svgContainer);
-        this.inputElement.focus();
+        // this.inputElement.focus();
     }
 
 
@@ -102,10 +103,10 @@ export default class ScrollView2 extends Component {
           let group = visibleNoteGroups.shift();
           console.log('group', group);
           group.classList.add('correct');
-          let { noteTags} = this.state;
-          let noteCurrent = noteTags.shift();
+          let { noteObjects} = this.state;
+          let noteCurrent = noteObjects.shift();
           this.setState({
-            noteCurrent: noteCurrent,
+            noteCurrent: noteCurrent.noteString,
           })
           // The note will be somewhere in the middle of its move to the left -- by
           // getting its computed style we find its x-position, freeze it there, and
@@ -134,7 +135,7 @@ export default class ScrollView2 extends Component {
 
     resetScroll = () => {
       this.initializeNotes();
-      this.inputElement.focus();
+      // this.inputElement.focus();
       // this.onAddNote();
     }
 
@@ -194,11 +195,15 @@ export default class ScrollView2 extends Component {
     		if(index === -1) return;
     		group.classList.add('too-slow');
         visibleNoteGroups.shift();
-        let { noteTags} = this.state;
-        let noteCurrent = noteTags.shift();
-        this.setState({
-          noteCurrent: noteCurrent,
-        })
+        let { noteObjects} = this.state;
+        let noteCurrent = noteObjects.shift();
+
+        if (noteCurrent) {
+          this.setState({
+            noteCurrent: noteCurrent.noteString,
+          })
+        }
+
         // this.onAddNote();
     	}, 5000);
       } else {
@@ -231,16 +236,20 @@ export default class ScrollView2 extends Component {
               <p className="scrollBoxText">{this.state.noteCurrent}</p>
               </div>
             </div>
-            <div id="controls">
-              <div id='add-note' className="noteTextBox" onClick={this.onAddNote}>Add Note</div>
-              <div id='right-answer' className="noteTextBox" ref={(inp) => {this.inputElement = inp}} onClick={(e) => this.onRightNote(e)}>Right Answer</div>
-              <div id='reset' className="noteTextBox" onClick={this.resetScroll}>Reset</div>
 
-
-            </div>
           </div>
         )
 
     }
 
 }
+
+
+// <div id="controls">
+// <div id='add-note' className="noteTextBox" onClick={this.onAddNote}>Add Note</div>
+// <div id='right-answer' className="noteTextBox" ref={(inp) => {this.inputElement = inp}} onClick={(e) => this.onRightNote(e)}>Right Answer</div>
+// <div id='reset' className="noteTextBox" onClick={this.resetScroll}>Reset</div>
+//
+//
+// </div>
+ 

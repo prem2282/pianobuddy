@@ -1,7 +1,7 @@
 .notesHeader {
   color: Lavender;
   display: grid;
-  grid-template-columns: 10% 80% 10%;
+  grid-template-columns: 10% 10% 70% 10%;
 
 }
 .notesContainter {
@@ -102,13 +102,36 @@ padding-left: 10%;
   transition: background-color 200ms linear;
 }
 
-.correctNoteBox{
+.playedNoteBox {
+  background-color: darkorange;
+  background-blend-mode: luminosity;
+  opacity: .8;
+  -webkit-transition: background-color 200ms linear;
+  -ms-transition: background-color 200ms linear;
+  transition: background-color 200ms linear;  
+  box-shadow:-1px -1px 2px rgba(255,255,255,0.2) inset, 0 -2px 2px 3px rgba(0,0,0,0.6) inset, 0 1px 2px rgba(0,0,0,0.5);
+	background:linear-gradient(left, #444 0%,#222 100%);
+}
+.correctNoteBoxBG{
 background-color: lightBlue;
 background-blend-mode: luminosity;
 -webkit-transition: background-color 200ms linear;
 -ms-transition: background-color 200ms linear;
 transition: background-color 200ms linear;
 }
+
+.correctNoteBoxScale{
+  background-color: lightBlue;
+  background-blend-mode: luminosity;
+  -webkit-transition: background-color 200ms linear;
+  -ms-transition: background-color 200ms linear;
+  transition: background-color 200ms linear;
+  transform: scale(1.2);
+  -webkit-transition: transform 300ms linear;
+  -ms-transition: transform 300ms linear;
+  transition: transform 300ms linear;
+
+  }
 
 .wrongNoteBox{
 background-color: IndianRed;

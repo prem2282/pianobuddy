@@ -1,4 +1,5 @@
 
+
 let noteCount = 0;
 
 const noteForMidiPlayer = (noteStr) => {
@@ -15,7 +16,11 @@ const noteForMidiPlayer = (noteStr) => {
             let noteArray = noteSplit[0].split('')
             let note = null;
             let duration = '4n';
+            let durationVex = 'q';
             let acc = null;
+            if (noteSplit.length === 2) {
+              durationVex = noteSplit[1]
+            }
 
             if (noteSplit.length === 2) {
               duration = noteSplit[1]
@@ -51,6 +56,9 @@ const noteForMidiPlayer = (noteStr) => {
                 noteString : noteArray[0],
                 noteScale : 4,
                 noteDuration: duration,
+                durationVex: durationVex,
+                acc: '',
+                noteLetter:noteArray[0],
               }
 
             } else if (noteArray.length===2) { //it can either have acc or scale
@@ -60,6 +68,9 @@ const noteForMidiPlayer = (noteStr) => {
                   noteString : noteArray[0],
                   noteScale : noteArray[1],
                   noteDuration: duration,
+                  durationVex: durationVex,
+                  acc: '',
+                  noteLetter:noteArray[0],
                 }
               } else {
                 acc = noteArray[1] //if the second byte is not numeric then it is the acc. default scale to 4
@@ -69,6 +80,9 @@ const noteForMidiPlayer = (noteStr) => {
                   noteString : noteArray[0] + acc,
                   noteScale : 4,
                   noteDuration: duration,
+                  durationVex: durationVex,
+                  acc: acc,
+                  noteLetter:noteArray[0],
                 }
               }
 
@@ -79,6 +93,9 @@ const noteForMidiPlayer = (noteStr) => {
                 noteString : noteArray[0] + acc,
                 noteScale : noteArray[1],
                 noteDuration: duration,
+                durationVex: durationVex,
+                acc: acc,
+                noteLetter:noteArray[0],
               }
 
             } else if (noteArray.length===4) { // see examble 5
@@ -88,6 +105,9 @@ const noteForMidiPlayer = (noteStr) => {
                 noteString : noteArray[0] + acc,
                 noteScale : noteArray[1],
                 noteDuration: duration,
+                durationVex: durationVex,
+                acc: acc,
+                noteLetter:noteArray[0],
               }
             }
 

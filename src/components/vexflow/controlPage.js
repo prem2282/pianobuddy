@@ -3,7 +3,10 @@ import React, { Component } from 'react';
 // import {Animated} from 'react-animated-css';
 // import './landing.css';
 // import Delayed from '../..//components/header/delayed';
-import SongList from './notesFile1';
+import courseList from '../..//components/data/courseList';
+import SongList from '../..//components/data/songList';
+import SongDetails from '../..//components/data/songDetails';
+import courseDetails from '../..//components/data/courseDetails';
 import NotesPage from './notesRender';
 
 
@@ -15,14 +18,36 @@ class controlPage extends Component {
     }
   }
 
+  getLessonCategories = () => {
+    let lessonCategory = courseDetails.map((lesson) => {
+      return lesson.title
+    })
+
+    lessonCategory = [...Set(lessonCategory)];
+    return lessonCategory;
+  }
+
+  lessonsSelected = () => {
+    this.getLessonCategories();
+
+  }
 
   render () {
     return(
+      <div>
+        <div onClick={this.lessonsSelected}>
+          Lessons
+        </div>
+        <div onClick={this.songsSelected}>
+          Songs
+        </div>
         <div>
             <NotesPage
-              song = {SongList[0]}
+              song = {SongDetails[0]}
             />
         </div>
+      </div>
+  
     )
   }
 }
