@@ -1,0 +1,52 @@
+
+.controlMenuContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  height: 85vh;
+  background-color: Beige;
+}
+
+.controlMenuOne{
+display: inline-block;
+background-color: IndianRed;
+color: white;
+cursor: pointer;
+align-self: center;
+margin: .5em;
+padding: .5em;
+border-radius: 3rem;
+font-family: 'Pompiere', cursive;
+font-size: 2rem;
+justify-content: center;
+}
+
+.menuNavButton{
+display: grid;
+background-color: Beige;
+color: IndianRed;
+width: Auto;
+cursor: pointer;
+align-self: center;
+margin: .1rem;
+padding: .1rem .5rem;
+border-radius: 1rem;
+font-family: 'Indie+Flower', cursive;
+font-size: 1.2rem;
+}
+
+.menuButtonBox {
+  display: flex;
+  justify-content: center;
+  background-color: IndianRed;
+}
+.menuHeaderBox{
+display: grid;
+grid-template-columns: 10% 80% 10%;
+padding-right: 10%;
+padding-left: 10%;
+background: IndianRed;
+margin-bottom: 0;
+height: 15vh;
+}

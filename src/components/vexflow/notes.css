@@ -1,3 +1,25 @@
+.songOptionBox {
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 90vh;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.pianoKeys {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.midiSoundsClass {
+  height: 0px;
+  /*position: fixed;*/
+
+
+}
 .notesHeader {
   color: Lavender;
   display: grid;
@@ -15,7 +37,7 @@
 }
 
 .songOptionButton{
-display: flex;
+display: inline-block;;
 background-color: IndianRed;
 color: white;
 cursor: pointer;
@@ -24,13 +46,13 @@ margin: .5em;
 padding: .5em;
 border-radius: 3rem;
 font-family: 'Pompiere', cursive;
-font-size: 1.5rem;
+font-size: 2rem;
 justify-content: center;
-
+opacity: .8;
 }
 .notesNavButton{
 display: grid;
-background-color: IndianRed;
+background-color: transparent;;
 color: white;
 width: Auto;
 cursor: pointer;
@@ -46,16 +68,21 @@ font-size: 1.2rem;
 display: flex;
 justify-content: center;
 }
-
+.headerCenterTextContainer{
+  display: grid;
+  grid-template-columns: 100%;
+}
 .notesHeaderBox{
 display: grid;
-grid-template-columns: 10% 80% 10%;
-padding-right: 10%;
-padding-left: 10%;
+grid-template-columns: 10% 5% 5% 60% 5% 10%;
+/*padding-right: 2.5%;
+padding-left: 2.5%;*/
 background: IndianRed;
 margin-bottom: 0;
-height: 3rem;
+height: 2rem;
 }
+
+
 
 
 .notesHeaderText{
@@ -64,13 +91,39 @@ font-family: 'Pompiere', cursive;
 margin-bottom: 0;
 }
 
+.errorTxtOne{
+display: inline-block;
+color: Snow;
+font-family: 'Pompiere', cursive;
+margin-bottom: 0;
+font-size: 1.5rem;
+background-color: IndianRed;
+padding: .2em;
+border-radius: 1em;
+margin: .2em;
+}
+
+.errorTxtTwo{
+color: DarkSlateGray;
+font-family: 'Pompiere', cursive;
+margin-bottom: 0;
+font-size: 2rem;
+/*background-color: skyBlue;*/
+padding: .2em;
+border-radius: 1em;
+margin: .2em;
+}
+
+
 
 .notesPage{
-background: Beige;
+background:NavajoWhite ;
 display: grid;
 grid-template-columns: 100%;
 min-height: 100vh;
 max-height: 100%;
+background-size: cover;
+background-repeat: no-repeat;
 }
 
 .flexNotes{
@@ -108,7 +161,7 @@ padding-left: 10%;
   opacity: .8;
   -webkit-transition: background-color 200ms linear;
   -ms-transition: background-color 200ms linear;
-  transition: background-color 200ms linear;  
+  transition: background-color 200ms linear;
   box-shadow:-1px -1px 2px rgba(255,255,255,0.2) inset, 0 -2px 2px 3px rgba(0,0,0,0.6) inset, 0 1px 2px rgba(0,0,0,0.5);
 	background:linear-gradient(left, #444 0%,#222 100%);
 }
@@ -141,50 +194,85 @@ background-blend-mode: luminosity;
 transition: background-color 200ms linear;
 }
 
+.noteTextBoxContainer {
+  padding-left: .6rem;
+  display: flex;
 
+
+}
 .noteTextBox{
 /*border: .5px solid blue;*/
 /*font-size: .8rem;*/
 /*background-color: transparent;*/
-
+display: inline-block;
+/*background-color: DarkKhaki;*/
+font-size: 1rem;
 margin-left: .1rem;
 margin-right: .1rem;
+margin-bottom: 0px;
+padding: .2rem;
 border-radius: .5rem;
-border-style: solid;
-border-width: thin;
+/*border-style: solid;
+border-width: thin;*/
 border-color: IndianRed;
 text-transform:capitalize;
 font-family: 'Pompiere', cursive;
+font-weight: bold;
+opacity: .8;
 }
 
 .noteSideBox{
 /*border: .5px solid blue;*/
-/*font-size: .8rem;*/
+font-size: .8rem;
 background-color: IndianRed;
 margin-left: .2rem;
+margin-bottom: 0px;
 border-radius: .5rem;
 text-transform:capitalize;
 color: Snow;
 font-family: 'Pompiere', cursive;
 }
 
-.lyricBox{
+.songOptionHeaderText{
+    display: inline-block;
+  font-family: 'Pompiere', cursive;
+  font-size: 2em;
+  border-radius: .5rem;
+  color: Snow;
+  background-color: #554B75;
+  opacity: .7;
+
+
+}
+.headerCenterText{
 font-family: 'Pompiere', cursive;
 font-size: 1.5rem;
 /*background-color: MediumSlateBlue;*/
 margin-bottom: 0;
-color: DarkSlateGray;
+color: Ivory;
+font-weight: bolder;
+}
+
+.lyricBox{
+font-family: 'Pompiere', cursive;
+font-size: 1.2rem;
+/*background-color: MediumSlateBlue;*/
+margin-bottom: 0;
+color: SaddleBrown;
 font-weight: bolder;
 }
 
 .lineBox{
 /*margin: 1em;*/
+/*position: fixed;
+top: 0;*/
+width: 100%;
 background-color: NavajoWhite;
 border-radius: 0rem;
 margin-left: 0%;
 margin-right: 0%;
 height: auto;
-margin-bottom: 1em;
+/*margin-bottom: 1em;*/
 }
 
 .choiceContainer {
@@ -192,7 +280,17 @@ margin-bottom: 1em;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: NavajoWhite;
 }
+
+.errorContainer {
+  padding : 2rem;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  background-color: NavajoWhite;
+}
+
 .whiteKeyChoice {
   /* background-color: darkslategrey; */
   /* padding: 2rem;
@@ -210,7 +308,7 @@ margin-bottom: 1em;
   font-size: 2rem;
   font-family: 'Pompiere', cursive;
   font-weight: bold;
-} 
+}
 
 .whiteKeyChoice:active {
 	border-top:1px solid #777;
