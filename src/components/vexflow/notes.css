@@ -201,24 +201,17 @@ transition: background-color 200ms linear;
 
 }
 .noteTextBox{
-/*border: .5px solid blue;*/
-/*font-size: .8rem;*/
-/*background-color: transparent;*/
+
 display: inline-block;
-/*background-color: DarkKhaki;*/
-font-size: 1rem;
+
+font-size: 1.5rem;
 margin-left: .1rem;
 margin-right: .1rem;
 margin-bottom: 0px;
 padding: .2rem;
-border-radius: .5rem;
-/*border-style: solid;
-border-width: thin;*/
-border-color: IndianRed;
 text-transform:capitalize;
 font-family: 'Pompiere', cursive;
 font-weight: bold;
-opacity: .8;
 }
 
 .noteSideBox{

@@ -197,14 +197,19 @@ class notesRender extends Component {
 
 
     keyInputReceived = (e) => {
-        console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ").");
-        console.log("key details:", e)
+        // console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ").");
+        // console.log("key details:", e)
 
-        let {practice, keyInputDetails, allNotesCompleted,allLinesCompleted, staveIndex, stavesCount, scrollview} = this.state
+        let {practice,scrollView, keyInputDetails, allNotesCompleted,allLinesCompleted, staveIndex, stavesCount, scrollview} = this.state
 
 
       if (e !== keyInputDetails) {
 
+        if (scrollView) {
+          this.setState({
+            keyInputDetails: e
+          })
+        }
         if (practice) {
 
           if (allLinesCompleted) {
@@ -299,8 +304,8 @@ class notesRender extends Component {
           })
         } else {
 
-          // console.log(WebMidi.inputs);
-          // console.log(WebMidi.outputs);
+          console.log(WebMidi.inputs);
+          console.log(WebMidi.outputs);
 
           if (WebMidi.inputs.length > 0) {
 
@@ -1294,6 +1299,7 @@ class notesRender extends Component {
                     {scrollView?
                       <ScrollView
                       notes = {noteObject[staveIndex]}
+                      keyInputDetails={this.state.keyInputDetails}
                       />
                       :
                       null

@@ -87,8 +87,9 @@ export default class ScrollView2 extends Component {
     }
 
 
-    onRightNote = (event) => {
+    onNoteInput = () => {
 
+      
       if (visibleNoteGroups.length>0) {
 
         let firstGroup = visibleNoteGroups[0];
@@ -96,33 +97,44 @@ export default class ScrollView2 extends Component {
         const xvalue = tmatrix.split(',')[4].trim();
         console.log({xvalue})
 
-        console.log(event.key);
+        // console.log(event.key);
+        let { noteObjects} = this.state;
+        let noteCurrent = noteObjects[0];
+        let notePressed = this.props.keyInputDetails.note
+        console.log({notePressed},{noteCurrent})
+        if (notePressed.name === noteCurrent.noteLetter && notePressed.octave === noteCurrent.noteScale) {
 
-        if (xvalue < -600) {
-          console.log("can execute now");
-          let group = visibleNoteGroups.shift();
-          console.log('group', group);
-          group.classList.add('correct');
-          let { noteObjects} = this.state;
-          let noteCurrent = noteObjects.shift();
-          this.setState({
-            noteCurrent: noteCurrent.noteString,
-          })
-          // The note will be somewhere in the middle of its move to the left -- by
-          // getting its computed style we find its x-position, freeze it there, and
-          // then send it straight up to note heaven with no horizontal motion.
-          const transformMatrix = window.getComputedStyle(group).transform;
-          // transformMatrix will be something like 'matrix(1, 0, 0, 1, -118, 0)'
-          // where, since we're only translating in x, the 4th property will be
-          // the current x-translation. You can dive into the gory details of
-          // CSS3 transform matrices (along with matrix multiplication) if you want
-          // at http://www.useragentman.com/blog/2011/01/07/css3-matrix-transform-for-the-mathematically-challenged/
-          const x = transformMatrix.split(',')[4].trim();
-          // And, finally, we set the note's style.transform property to send it skyward.
-          group.style.transform = `translate(${x}px, -800px)`;
-          // this.onAddNote();
+          if (xvalue < -600) {
+            console.log("can execute now");
+            let group = visibleNoteGroups.shift();
+            // console.log('group', group);
+            group.classList.add('correct');
+            let { noteObjects} = this.state;
+            let noteCurrent = noteObjects.shift();
+            this.setState({
+              noteCurrent: noteCurrent.noteString,
+            })
+
+            // The note will be somewhere in the middle of its move to the left -- by
+            // getting its computed style we find its x-position, freeze it there, and
+            // then send it straight up to note heaven with no horizontal motion.
+            const transformMatrix = window.getComputedStyle(group).transform;
+            // transformMatrix will be something like 'matrix(1, 0, 0, 1, -118, 0)'
+            // where, since we're only translating in x, the 4th property will be
+            // the current x-translation. You can dive into the gory details of
+            // CSS3 transform matrices (along with matrix multiplication) if you want
+            // at http://www.useragentman.com/blog/2011/01/07/css3-matrix-transform-for-the-mathematically-challenged/
+            const x = transformMatrix.split(',')[4].trim();
+
+            // And, finally, we set the note's style.transform property to send it skyward.
+            group.style.transform = `translate(${x}px, -800px)`;
+
+            // this.onAddNote();
+          } else {
+            console.log("cant remove");
+          }
         } else {
-          console.log("cant remove");
+          console.log("wrong key pressed")
         }
 
       } else {
@@ -218,9 +230,24 @@ export default class ScrollView2 extends Component {
     //     return system;
     // }
 
+    checkforInput = () => {
+      if (this.state.keyInputDetails === this.props.keyInputDetails) {
+
+      } else {
+
+        this.onNoteInput()
+        
+        this.setState({
+          keyInputDetails :this.props.keyInputDetails, 
+        })
+
+      }
+    }
     render() {
 
         // console.clear();
+        // console.log('input:', this.props.keyInputDetails)
+        this.checkforInput();
 
         let {notes, scrollStarted} = this.state
         if (notes &&  !scrollStarted) {
