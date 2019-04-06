@@ -1,14 +1,14 @@
-
-
 import Vex from 'vexflow';
 import React, {Component} from 'react';
 import './scroll.css'
 import NoteFormation from './noteFormationNew';
 import NoteForTone from './noteForTone';
 import MIDISounds from 'midi-sounds-react';
+import {message} from 'antd';
 import {Animated} from 'react-animated-css';
 const VF = Vex.Flow;
-const visibleNoteGroups = [];
+// const visibleNoteGroups = [];
+let errorCount = 0;
 const svgContainer = document.createElement('div');
 var renderer = new VF.Renderer(svgContainer, VF.Renderer.Backends.SVG);
 var stave = new VF.Stave(0, 0, window.innerWidth)
@@ -17,8 +17,15 @@ var stave = new VF.Stave(0, 0, window.innerWidth)
 // Configure the rendering context.
 renderer.resize(window.innerWidth, 100);
 var context = renderer.getContext();
-let bpm = 80;
+let bpm = 120;
 
+message.config(
+  {
+    bottom:100,
+    duration: 1,
+    maxcount: 3
+  }
+)
 var tickContext = new VF.TickContext();
 
 export default class ScrollView2 extends Component {
@@ -26,18 +33,27 @@ export default class ScrollView2 extends Component {
     constructor(props) {
         super(props);
 
+        // let noteObjects = [...this.props.notes[0]]
         this.state = {
             notes: null,
+            staveIndex: 0,
             x: 0,
             y: 0,
             scrollStarted: false,
+            noteObjects: null,
+            noteRotation: null,
+            keyInputDetails: this.props.keyInputDetails,
+            visibleNoteGroups: [],
+            firstTimeRender: true,
+            showErrorPage: false,
+
 
         };
     };
 
     noteFormation = (noteStr) => {
 
-      // console.log({noteStr});
+
       let {cleff, keys, duration, acc, noteCount} = NoteFormation(noteStr);
 
       let note =  new VF.StaveNote({clef: cleff, keys: keys, duration: duration ,}).setContext(context).setStave(stave);
@@ -52,68 +68,61 @@ export default class ScrollView2 extends Component {
 
     }
 
-    initializeNotes = () => {
-      // var durations = ['8', '4', '2', '1'];
+    initializeNotes = (staveIndex) => {
 
-      // let input =  this.props.notes;
-        //  let noteObjects = ...this.props.notes;
-      // let noteTags = input.split(' ')
-      // console.log({noteObjects})
-      // let noteText = noteTags.map((stave_note) => { return NoteForTone(stave_note).noteTone});
-
-      let notes = this.props.notes.map(noteObject => {
-        return this.noteFormation(noteObject).note
+      let noteStave = this.props.notes[staveIndex];
+      let notes = noteStave.map(note => {
+        return this.noteFormation(note).note
       })
 
-      console.log({notes});
 
       tickContext.preFormat().setX(700);
       this.setState({
         notes : notes,
         scrollStarted: false,
-        noteObjects: [...this.props.notes],
-        noteCurrent: this.props.notes[0].noteString,
+        firstTimeRender: false,
+        noteObjects: [...this.props.notes[staveIndex]],
+        noteRotation: [...this.props.notes[staveIndex]],
       })
-      // noteObjects.shift()
     }
     componentDidMount() {
 
-        console.log("componentDidMount");
+
         stave.setContext(context).draw();
-        this.initializeNotes();
-        console.log("initializeNotes done");
+        this.initializeNotes(this.state.staveIndex);
+
         this.refs.outer.appendChild(svgContainer);
-        // this.inputElement.focus();
     }
 
 
     onNoteInput = () => {
 
-      
+      let {visibleNoteGroups,  noteRotation} = this.state
       if (visibleNoteGroups.length>0) {
 
         let firstGroup = visibleNoteGroups[0];
         const tmatrix = window.getComputedStyle(firstGroup).transform;
         const xvalue = tmatrix.split(',')[4].trim();
-        console.log({xvalue})
 
-        // console.log(event.key);
-        let { noteObjects} = this.state;
-        let noteCurrent = noteObjects[0];
+        // let { noteObjects} = this.state;
+        console.log({noteRotation})
+        let noteCurrent = noteRotation[0];
         let notePressed = this.props.keyInputDetails.note
         console.log({notePressed},{noteCurrent})
         if (notePressed.name === noteCurrent.noteLetter && notePressed.octave === noteCurrent.noteScale) {
 
           if (xvalue < -600) {
             console.log("can execute now");
+            message.error('good job!');
             let group = visibleNoteGroups.shift();
-            // console.log('group', group);
-            group.classList.add('correct');
-            let { noteObjects} = this.state;
-            let noteCurrent = noteObjects.shift();
+            noteRotation.shift()
             this.setState({
-              noteCurrent: noteCurrent.noteString,
+              visibleNoteGroups: visibleNoteGroups,
+              noteRotation: noteRotation,
             })
+
+            group.classList.add('correct');
+
 
             // The note will be somewhere in the middle of its move to the left -- by
             // getting its computed style we find its x-position, freeze it there, and
@@ -131,10 +140,11 @@ export default class ScrollView2 extends Component {
 
             // this.onAddNote();
           } else {
-            console.log("cant remove");
+            message.error('too early');
           }
         } else {
-          console.log("wrong key pressed")
+          message.error('wrong key');
+          errorCount = errorCount + 1;
         }
 
       } else {
@@ -147,8 +157,6 @@ export default class ScrollView2 extends Component {
 
     resetScroll = () => {
       this.initializeNotes();
-      // this.inputElement.focus();
-      // this.onAddNote();
     }
 
     timeDuration = (durationText) => {
@@ -173,11 +181,10 @@ export default class ScrollView2 extends Component {
 
     onAddNote = () => {
 
-      let {notes} = this.state;
+      let {notes, visibleNoteGroups, noteRotation} = this.state;
 
 
       let note = notes.shift();
-      // console.log('note', note);
       this.setState({
         notes: notes,
         scrollStarted: true,
@@ -185,7 +192,6 @@ export default class ScrollView2 extends Component {
       })
     	if(note) {
       // var context = renderer.getContext();
-      console.log({note});
       const group = context.openGroup();
       visibleNoteGroups.push(group);
     	note.draw();
@@ -193,8 +199,9 @@ export default class ScrollView2 extends Component {
     	group.classList.add('scroll');
       const box = group.getBoundingClientRect();
     	group.classList.add('scrolling');
-
-      // console.log("duration", note.duration)
+      this.setState({
+        visibleNoteGroups:visibleNoteGroups
+      })
       let duration = this.timeDuration(note.duration);
 
       window.setTimeout(() => {
@@ -205,16 +212,15 @@ export default class ScrollView2 extends Component {
     	window.setTimeout(() => {
     		const index = visibleNoteGroups.indexOf(group);
     		if(index === -1) return;
-    		group.classList.add('too-slow');
+        group.classList.add('too-slow');
+        errorCount = errorCount+1;
         visibleNoteGroups.shift();
-        let { noteObjects} = this.state;
-        let noteCurrent = noteObjects.shift();
+        noteRotation.shift()
+        this.setState({
+          visibleNoteGroups:visibleNoteGroups,
+          noteRotation:noteRotation,
+        })
 
-        if (noteCurrent) {
-          this.setState({
-            noteCurrent: noteCurrent.noteString,
-          })
-        }
 
         // this.onAddNote();
     	}, 5000);
@@ -230,40 +236,147 @@ export default class ScrollView2 extends Component {
     //     return system;
     // }
 
+    showErrorPage = () => {
+      
+      this.setState({
+        showErrorPage: true,
+      })
+
+      window.setTimeout(() => {
+
+        this.setNextLine(false);
+
+      }, 2000);
+  
+    }
+
+    setNextLine = (addIndex) => {
+      //addIndex can be true or false
+      //if true - next line will be given. (add 1 to index)
+      //if false - same line will be given. (no add to index)
+      let {staveIndex} = this.state
+      let {stavesCount} = this.props
+      console.log({staveIndex});
+
+
+      errorCount = 0;
+
+
+      if (staveIndex < stavesCount-1) {
+        if (addIndex) {
+          staveIndex = staveIndex+1
+        }
+
+        let noteStave = this.props.notes[staveIndex];
+        let notes = noteStave.map(note => {
+          return this.noteFormation(note).note
+        })
+  
+        tickContext.preFormat().setX(700);
+
+        this.setState({
+          scrollStarted: false,
+          staveIndex: staveIndex,
+          firstTimeRender:false,
+          notes : notes,
+          noteObjects: [...this.props.notes[staveIndex]],
+          noteRotation: [...this.props.notes[staveIndex]],
+          showErrorPage: false,
+        })
+        // this.initializeNotes(staveIndex)
+      } else {
+        //all lines completed
+        this.props.scrollCompleted()
+      }
+
+
+    }
+    scrollEnded = () => {
+
+      let {showErrorPage} = this.state
+      let {keyBoardConnection} = this.props
+      console.log('scrollEnded');
+      if (keyBoardConnection) {
+        if (!showErrorPage) {
+          if (errorCount > 2) {
+            this.showErrorPage();
+          } else {
+            //setting true here tell the function to add 1 to index. other wise same line will be repeated.
+            //in case of error, same line has to be repeated.
+            this.setNextLine(true);
+          }
+        }
+      } else {
+        //if key board is not connection, there is no way to check the key input.
+        //So, this will always give the next line without checking for errors.
+        //this way user can manually practice the scroll view
+        this.setNextLine(true);
+      }
+
+
+
+
+      // this.props.showNextLyric();
+    }
+
     checkforInput = () => {
+
+      let {showErrorPage} = this.state
       if (this.state.keyInputDetails === this.props.keyInputDetails) {
 
       } else {
 
-        this.onNoteInput()
-        
-        this.setState({
-          keyInputDetails :this.props.keyInputDetails, 
-        })
+        if (!showErrorPage) {
+          this.onNoteInput()
+
+          this.setState({
+            keyInputDetails :this.props.keyInputDetails,
+          })
+        }
+
 
       }
     }
     render() {
 
-        // console.clear();
-        // console.log('input:', this.props.keyInputDetails)
-        this.checkforInput();
 
-        let {notes, scrollStarted} = this.state
+
+        let {notes, scrollStarted, showErrorPage, visibleNoteGroups, staveIndex, firstTimeRender} = this.state
+
+
+        if (visibleNoteGroups.length>0) {
+            this.checkforInput();
+        } else {
+          if (scrollStarted && !firstTimeRender) {
+              this.scrollEnded();
+          }
+
+        }
+
         if (notes &&  !scrollStarted) {
-          console.log("scrollStarted");
+
           this.onAddNote();
         }
 
+        let lyric = this.props.lyrics[staveIndex]
+        if (!lyric) {
+          lyric = 'line ' + String(staveIndex + 1)
+        }
         return(
           <div>
-            <div className="scrollStaveBox" >
-              <div className="scrollStave" ref="outer" ></div>
-              <div className="scrollStave dummyStave">
-              <p className="scrollBoxText">{this.state.noteCurrent}</p>
+            <Animated animationIn="fadeIn" animationOut="zoomOut" isVisible={!showErrorPage}>
+              <h2>{lyric}</h2>
+              <div className="scrollStaveBox" >
+                <div className="scrollStave" ref="outer" ></div>
+                <div className="scrollStave dummyStave"></div>
               </div>
-            </div>
-
+            </Animated>
+            <Animated animationIn="fadeIn" animationOut="zoomOut" isVisible={showErrorPage}>
+              <div className="scrollStaveBox" >
+                <h2>Too many errors</h2>
+                <h2>Let's do that again</h2>
+              </div>
+            </Animated>           
           </div>
         )
 
@@ -279,4 +392,3 @@ export default class ScrollView2 extends Component {
 //
 //
 // </div>
- 

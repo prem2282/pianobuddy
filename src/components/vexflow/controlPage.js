@@ -467,17 +467,24 @@ class controlPage extends Component {
     let pageId4 = this.pageId4();
     let pageId5 = this.pageId5();
     let backButton = this.backButton();
+    let containerClass = 'controlMenuContainer'
+    if (pageId === 0) {
+      containerClass = 'controlMenuContainer1'
+    } else {
+      containerClass = 'controlMenuContainer'
+    }
 
     return(
       <div>
-
+        
+        
 
         {pageId<6?
           <div>
             <div className="menuHeaderBox">
               {backButton}
             </div>
-            <div className="controlMenuContainer">
+            <div className={containerClass}>
               {pageId0}
               {pageId1}
               {pageId2}

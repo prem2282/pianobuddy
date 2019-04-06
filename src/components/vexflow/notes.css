@@ -16,8 +16,9 @@
 
 .midiSoundsClass {
   height: 0px;
-  /*position: fixed;*/
-
+  position: fixed;
+  bottom: -100;
+  z-index: -1;
 
 }
 .notesHeader {
@@ -71,6 +72,8 @@ justify-content: center;
 .headerCenterTextContainer{
   display: grid;
   grid-template-columns: 100%;
+  color: white;
+  margin-bottom: 0px;
 }
 .notesHeaderBox{
 display: grid;
@@ -79,7 +82,7 @@ grid-template-columns: 10% 5% 5% 60% 5% 10%;
 padding-left: 2.5%;*/
 background: IndianRed;
 margin-bottom: 0;
-height: 2rem;
+height: 10vh;
 }
 
 
@@ -89,6 +92,7 @@ height: 2rem;
 color: Snow;
 font-family: 'Pompiere', cursive;
 margin-bottom: 0;
+
 }
 
 .errorTxtOne{
@@ -126,17 +130,22 @@ background-size: cover;
 background-repeat: no-repeat;
 }
 
-.flexNotes{
+
+.flexNotesTop{
 display: block;
-/*grid-template-columns: 65px 200px 200px 200px;*/
-/*padding-left: 5%;
-padding-right: 5%;*/
-/*justify-content: center;*/
+/*position: absolute;
+top: 2rem;*/
+}
+
+.flexNotesBotton{
+display: block;
+position: absolute;
+bottom: 3rem;
 }
 
 .flexNotesInner{
 display: flex;
-padding-left: 5%;
+padding-left: 2rem;
 }
 
 
@@ -203,7 +212,6 @@ transition: background-color 200ms linear;
 .noteTextBox{
 
 display: inline-block;
-
 font-size: 1.5rem;
 margin-left: .1rem;
 margin-right: .1rem;
@@ -212,6 +220,7 @@ padding: .2rem;
 text-transform:capitalize;
 font-family: 'Pompiere', cursive;
 font-weight: bold;
+color: DarkSlateGray;
 }
 
 .noteSideBox{
@@ -242,8 +251,9 @@ font-family: 'Pompiere', cursive;
 font-size: 1.5rem;
 /*background-color: MediumSlateBlue;*/
 margin-bottom: 0;
+align-self: center;
 color: Ivory;
-font-weight: bolder;
+/*font-weight: bolder;*/
 }
 
 .lyricBox{
