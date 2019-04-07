@@ -38,23 +38,24 @@ justify-content: center;
 }
 
 .menuNavButton{
-display: grid;
-background-color: Beige;
-color: IndianRed;
-width: Auto;
-cursor: pointer;
-align-self: center;
-margin: .1rem;
-padding: .1rem .5rem;
-border-radius: 1rem;
-font-family: 'Indie+Flower', cursive;
-font-size: 1.2rem;
-}
+  display: grid;
+  background-color: transparent;;
+  color: white;
+  width: Auto;
+  cursor: pointer;
+  align-self: center;
+  /* margin: .1rem; */
+  /* padding: .1rem .5rem; */
+  /* border-radius: 1rem; */
+  font-family: 'Indie+Flower', cursive;
+  font-size: 1.2rem;
+  }
 
 .menuButtonBox {
   display: flex;
   justify-content: center;
   background-color: IndianRed;
+  margin-bottom: 0px;
 }
 .menuHeaderBox{
 display: grid;

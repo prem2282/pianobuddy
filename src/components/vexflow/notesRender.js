@@ -140,13 +140,19 @@ class notesRender extends Component {
       // let {noteObject} =
       // console.log({noteObject})
       // let instrument = 3;
-      let {noteString, noteDuration, noteScale} = thisNoteObject
+      let {noteString, noteDuration, noteScale, durationVex} = thisNoteObject
       // console.log({noteString},{noteDuration},{noteScale});
       let noteNum = NoteToNum(noteString) + Number(noteScale)*12;
       // console.log({noteNum});
       let duration = Tone.Time(noteDuration).toSeconds();
       // console.log({duration});
-      this.midiSounds.playChordNow(instrument, [noteNum], duration)
+      if (durationVex === 'qr' || durationVex === 'hr'  ) {
+        //this is a pause. so dont play it
+      } else {
+        this.midiSounds.playChordNow(instrument, [noteNum], duration)
+      }
+
+
 
 
     }
@@ -243,13 +249,19 @@ class notesRender extends Component {
       let currentStaveNotes = noteObject[staveIndex];
 
       let noteDuration = noteDelay[staveIndex][index]*1000
+      let durationVex = noteObject[staveIndex][index]
       console.log(noteDuration);
 
       let noteDetails = currentStaveNotes[index-1]
+      
       let noteKey = noteDetails.noteString + noteDetails.noteScale;
       delayTime = "+" + delayTime
-      console.log({noteKey})
-      output.playNote(noteKey, 16, {duration:noteDuration, time:delayTime});
+      // console.log({noteKey})
+      if (durationVex === 'qr' || durationVex === 'hr') {
+        //dont play. its a pause''
+      } else {
+        output.playNote(noteKey, 16, {duration:noteDuration, time:delayTime})      
+    }
 
       let notesCount = currentStaveNotes.length
       console.log({index}, {notesCount});
@@ -277,10 +289,12 @@ class notesRender extends Component {
         // console.log(WebMidi)
         if (WebMidi.outputs.length === 0) {
           // console.log("output not found");
-          // alert('midi device not found')
+          message('midi device lost');
           this.setState({
             webMidiEnabled: false,
+            webMidiInitialized: false,
           })
+          WebMidi.disable();
         }
 
       } else {
@@ -316,7 +330,7 @@ class notesRender extends Component {
             ((e) => {this.keyInputReceived(e)})
            )
 
-            // alert('midi device connected', WebMidi.outputs);
+            message('midi device connected');
             console.log("output found");
             this.setState({
               webMidiEnabled: true,
@@ -402,19 +416,39 @@ class notesRender extends Component {
 
     }
 
-    setClassForNoteBG = (keyInputDetails,source) => {
+    setClassForNoteBG = (keyInputDetails, source) => {
+
+      //check for pause in duration. if it is a pause, skip the note by adding the class to noteClass
+      let {noteClass, staveIndex, noteObject } = this.state;
+      let noteNumToCheck = noteClass.length;
+      let {durationVex} = noteObject[staveIndex][noteNumToCheck];
+ 
+      if (durationVex === 'qr' || durationVex === 'hr') {
+        noteClass.push('correctNoteBoxBG')
+        this.setState({
+          noteClass: noteClass,
+        })
+      } else {
+        this.setClassForNoteBGYes(keyInputDetails,source)
+      }
+
+    }
+
+    setClassForNoteBGYes = (keyInputDetails,source) => {
 
       let playedNote = ''
       let {noteClass, staveIndex, noteObject, errorCount, stavesCount, } = this.state;
       let currentStaveNotes = noteObject[staveIndex];
       let noteNumToCheck = noteClass.length;
-      let noteToCheck = noteObject[staveIndex][noteNumToCheck].noteString + noteObject[staveIndex][noteNumToCheck].noteScale
+      let {noteString, noteScale, durationVex} = noteObject[staveIndex][noteNumToCheck]
+      let noteToCheck = noteString + noteScale
 
       if (source === 'onScreen') {
         playedNote = noteObject[staveIndex][keyInputDetails-1].noteString + noteObject[staveIndex][keyInputDetails-1].noteScale
       } else {
         playedNote = keyInputDetails.note.name + keyInputDetails.note.octave
       }
+
 
 
       let noteId = "note" + (noteNumToCheck+1)
@@ -449,7 +483,7 @@ class notesRender extends Component {
               noteClass.push('correctNoteBoxBG')
               this.setState({
                 noteClass: noteClass,
-                keyInputDetails: keyInputDetails,
+                  keyInputDetails: keyInputDetails,
                 allNotesCompleted: false,
               })
       } else {
@@ -722,7 +756,13 @@ class notesRender extends Component {
 
       // let noteKey =  note.split('-');
       let vexFlowNote = this.noteForVexFlowNew(note);
+
       let noteKey = note.noteString + note.noteScale;
+      
+      if (note.durationVex === 'qr' || note.durationVex ==='hr'){
+        noteKey = ''
+      }
+
       // let {noteDelay} = this.state;
       let noteDelayForThis = [0,...noteDelay[staveIndex]];
 
@@ -851,10 +891,13 @@ class notesRender extends Component {
               <div></div>
             )
 
-            let headerCenterText = lyrics[staveIndex]
-            if (!headerCenterText) {
-              headerCenterText = 'Line ' + String(staveIndex)
-            }
+            // let headerCenterText = lyrics[staveIndex]
+            // if (!headerCenterText) {
+            //   headerCenterText = 'Line ' + String(staveIndex)
+            // }
+
+            let headerCenterText = this.state.notes_title;
+
 
             if (!firstTime) {
               centerHeaderText = (
@@ -878,7 +921,7 @@ class notesRender extends Component {
     lineBox = (noteObject,i) => {
 
 
-      let {showAll} = this.state
+      let {showAll,lyrics,notesVisibility} = this.state
 
       let stave_note = noteObject;
       let noteCount = this.noteCount(noteObject);
@@ -886,18 +929,23 @@ class notesRender extends Component {
 
       let notesBox = (
         <div  className="flexNotesTop">
+          <Delayed key={i} id={i} waitBeforeShow={500}>
+          <Animated animationIn="fadeIn" animationOut="bounceOut" isVisible={notesVisibility}>
+            <h2 className="noteTextBox">{lyrics[i]}</h2>
+          </Animated>
+          </Delayed>
           <div className="flexNotesInner">
             <div className="noteBox">
-            <Delayed key={i} id={i} waitBeforeShow={500}>
-              <Animated animationIn="fadeIn" animationOut="bounceOut" isVisible={true}>
-                <Clef/>
-                {showAll?
-                  <h2  className="noteSideBox" onClick={() => this.lineBoxSelected(i)}>select</h2>
-                  :
-                  null
-                }
-              </Animated>
-            </Delayed>
+              <Delayed key={i} id={i} waitBeforeShow={500}>
+                <Animated animationIn="fadeIn" animationOut="bounceOut" isVisible={notesVisibility}>
+                  <Clef/>
+                  {showAll?
+                    <h2  className="noteSideBox" onClick={() => this.lineBoxSelected(i)}>select</h2>
+                    :
+                    null
+                  }
+                </Animated>
+              </Delayed>
             </div>
             {stave_note.map((note,index) => {
               return(
@@ -1337,7 +1385,20 @@ class notesRender extends Component {
 
                     }
                     {scrollView && allLinesCompleted?
-                      <h1>Great Job!</h1>
+
+                      <Animated  animationIn="zoomIn" animationOut="bounceOut" isVisible={choiceVisibility}>
+                      <h1>Song Completed!</h1>
+                      <div className="choiceContainer">
+                        <div className="whiteKeyChoice" onClick={() => this.processSongCompletion(true,'onScreen')}>
+                          Redo
+                        </div>
+                        <div className="blackKeyChoice" onClick={() => this.processSongCompletion(false,'onScreen')}>
+                          Back
+                        </div>
+
+
+                      </div>
+                    </Animated>
                       :
                       null
 

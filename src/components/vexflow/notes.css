@@ -1,3 +1,10 @@
+* {
+  -webkit-user-select:none;
+  -webkit-touch-callout: none;
+  -khtml-user-select: none;
+  -ms-user-select:none;
+  -moz-user-select:none;
+}
 .songOptionBox {
   background-size: cover;
   background-repeat: no-repeat;
@@ -185,9 +192,9 @@ transition: background-color 200ms linear;
 .correctNoteBoxScale{
   background-color: lightBlue;
   background-blend-mode: luminosity;
-  -webkit-transition: background-color 200ms linear;
-  -ms-transition: background-color 200ms linear;
-  transition: background-color 200ms linear;
+  -webkit-transition: background-color 300ms linear;
+  -ms-transition: background-color 300ms linear;
+  transition: background-color 300ms linear;
   transform: scale(1.2);
   -webkit-transition: transform 300ms linear;
   -ms-transition: transform 300ms linear;
@@ -305,12 +312,18 @@ height: auto;
 	box-shadow:-1px -1px 2px rgba(255,255,255,0.2) inset, 0 -5px 2px 3px rgba(0,0,0,0.6) inset, 0 2px 4px rgba(0,0,0,0.5);
   background:linear-gradient(top, #eee 0%,#fff 100%);
   justify-content: center;
+  cursor: pointer;
   align-content: center;
   color: darkslategray;
   line-height: 10rem;
   font-size: 2rem;
   font-family: 'Pompiere', cursive;
   font-weight: bold;
+  transform: scale(1);
+  -webkit-transition: transform 300ms linear;
+  -ms-transition: transform 300ms linear;
+  transition: transform 300ms linear;
+
 }
 
 .whiteKeyChoice:active {
@@ -318,11 +331,17 @@ height: auto;
 	border-left:1px solid #999;
 	border-bottom:1px solid #999;
 	box-shadow:2px 0 3px rgba(0,0,0,0.1) inset, -5px 5px 20px rgba(0,0,0,0.2) inset,0 0 3px rgba(0,0,0,0.2);
-	background: linear-gradient(top, #fff 0%,#e9e9e9 100%);
+  background: linear-gradient(top, #fff 0%,#e9e9e9 100%);
+  transform: scale(.8);
+  -webkit-transition: transform 300ms linear;
+  -ms-transition: transform 300ms linear;
+  transition: transform 300ms linear;
 }
 
+
 .whiteKeyChoice:hover {
-	background-color: indianred;
+  background-color: indianred;
+  cursor: pointer;
 }
 
 .whiteKeyText{
@@ -342,10 +361,30 @@ height: auto;
 	background:linear-gradient(45deg, #222 0%,#555 100%);
   color: cornsilk;
   line-height: 10rem;
+  cursor: pointer;
   font-size: 2rem;
   font-family: 'Pompiere', cursive;
   font-weight: bold;
+  transform: scale(1);
+  -webkit-transition: transform 300ms linear;
+  -ms-transition: transform 300ms linear;
+  transition: transform 300ms linear;
+
 }
+
+.blackKeyChoice:active {
+	border-top:1px solid #777;
+	border-left:1px solid #999;
+	border-bottom:1px solid #999;
+	box-shadow:2px 0 3px rgba(0,0,0,0.1) inset, -5px 5px 20px rgba(0,0,0,0.2) inset,0 0 3px rgba(0,0,0,0.2);
+  /* background: linear-gradient(top, rgb(231, 89, 89) 0%,#e9e9e9 100%); */
+  background: indianred;
+  transform: scale(.8);
+  -webkit-transition: transform 300ms linear;
+  -ms-transition: transform 300ms linear;
+  transition: transform 300ms linear;
+}
+
 
 .blackKeyText{
   color: cornsilk;

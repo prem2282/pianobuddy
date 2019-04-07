@@ -9,6 +9,9 @@ const NoteForTone = (stave_note) => {
         case 'q':
           duration = '4n'
           break;
+        case 'qr':
+        duration = '4n'
+        break;
         case 'h':
           duration = '2n'
           break;

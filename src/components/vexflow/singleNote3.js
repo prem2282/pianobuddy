@@ -25,6 +25,9 @@ export default class SingleNote extends Component {
         if (duration === 'q') {
             return noteWidth;
         }
+        if (duration === 'qr') {
+            return noteWidth;
+        }
         if (duration === 'h') {
             return noteWidth*2;
         }
@@ -42,6 +45,9 @@ export default class SingleNote extends Component {
 
      findBeatCount = (duration) => {
         if (duration === 'q') {
+            return 1;
+        }
+        if (duration === 'qr') {
             return 1;
         }
         if (duration === 'h') {

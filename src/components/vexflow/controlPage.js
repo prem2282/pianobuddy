@@ -11,6 +11,7 @@ import {getComposerList, getActorList, getDirectorList, getGenreList, getPeriodL
 import LessonDetails from '../..//components/data/lessonDetails';
 import NotesPage from './notesRender';
 import {Animated} from 'react-animated-css';
+import {Icon, message} from 'antd';
 //pageId - 0:Top Level - Songs/Lessons
 //pageId - 1 Lesson selected from page 0, display list of categories
 //pageId - 2 Category selected from page 1, display list of lesson names
@@ -441,7 +442,6 @@ class controlPage extends Component {
 
 
   backButton = () => {
-    let backText = "<<"
     let {showBackButton} = this.state
     return (
       <Animated className="menuButtonBox" animationIn="fadeIn" animationOut="zoomOut" isVisible={showBackButton}>
@@ -449,7 +449,7 @@ class controlPage extends Component {
           className="menuNavButton"
           onClick = {() => this.backButtonClicked()}
         >
-        {backText}
+          <Icon type="double-left" />
       </div>
       </Animated>
     )

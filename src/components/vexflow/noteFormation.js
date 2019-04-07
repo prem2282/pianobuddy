@@ -56,10 +56,10 @@ const noteFormation = (noteStr) => {
                 noteCount = 1
                 break;
               case "qr":
-                noteCount = 1
+                noteCount = 0
                 break;
-                case "8":
-                noteCount = .5
+              case "8":
+              noteCount = .5
                 break;
               default:
 

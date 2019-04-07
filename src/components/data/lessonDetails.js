@@ -55,9 +55,9 @@ const LessonDetails = [
         id: 'S1',
         title: 'Mary had a little Lamb',
         notes: [
-          'E D C D E E E',
-          'D D D E G G',
-          'E D C D E E E',
+          'E D-8 C D E E E-h',
+          'D D D D-qr E G G-h',
+          'E D-8 C D E E E',
           'E D D E D C',
            ],
         lyric: [
@@ -109,21 +109,68 @@ const LessonDetails = [
         id: 3,
         title: 'Add F & G',
         notes: [
-            'C D E',
-            'C C C D D D E E E',
-            'C D E D C',
+            'C D E F G',
+            'G F E D C',
+            'D E F G C',
+            'F E D C G',
+            'C D E F G F E D C',
+            'G F E D C D E F G',
+            'C D C D E F E F G',
+            'G F G F E D E D C',            
            ],
         lyric: [
 
            ],
     },
     {
-        id: 3,
-        title: 'C to F train',
+        id: 4,
+        title: 'Skip keys',
         notes: [
-            'C D E',
-            'C C C D D D E E E',
-            'C D E D C',
+            'C E C E C E',
+            'E G E G E G',   
+            'C E G C E G',    
+            'G E C G E C',  
+            'C E G G E C',  
+            'G E C C E G',  
+            'D F D F D F',
+            'F D F D F D',
+            'D D F F D F',    
+            'F F D D F D',            
+           ],
+        lyric: [
+
+           ],
+    },
+    {
+        id: 5,
+        title: 'Jump and Go',
+        notes: [
+            'C E F G C',
+            'C D F G C',
+            'C D E G C',  
+            'C D E F C',   
+            'C D E F G C E F G C',   
+            'C D E F G C D F G C',   
+            'C D E F G C D E G C', 
+            'C D E F G C D E F C',
+           ],
+        lyric: [
+
+           ],
+    },
+    {
+        id: 6,
+        title: 'Jump and Go reverse',
+        notes: [
+            'G E D C G',
+            'G F D C G',
+            'G F E D G',  
+            'G F E C G',   
+            'G F E D C G E D C G',  
+            'G F E D C G F D C G',   
+            'G F E D C G F E D G',   
+            'G F E D C G F E C G',   
+             
            ],
         lyric: [
 
