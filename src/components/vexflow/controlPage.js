@@ -502,7 +502,13 @@ class controlPage extends Component {
                 homeButton = {this.backButtonClicked}
               />
           </div>
-          :null
+          :
+          <div>
+          <NotesPage
+            song = {null}
+            homeButton = {this.backButtonClicked}
+          />
+      </div>
         }
       </div>
 

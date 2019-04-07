@@ -44,25 +44,39 @@ class notesRender extends Component {
         // console.log(
         //   {noteText}
         // );
-        let noteObject = song.notes.map((stave_note) => {return NoteForMidiPlayer(stave_note)});
-        let noteStr = song.notes.map((stave_note) => {return NoteForVex(stave_note)})
-        let noteDelay = noteObject.map((stave_note) => {
-          return(
-            stave_note.map((note) => {
-              return Tone.Time(note.noteDuration).toSeconds()
-            })
-          )
-        } )
+        let noteObject = null;
+        let noteStr = null;
+        let noteDelay = null;
+        let title = null;
+        let stavesCount = 0;
+        let lyrics = null;
+        let image = null;
+        if (song) {
+           title = song.title;
+           lyrics = song.lyric;
+           image = song.image;
+           stavesCount = song.notes.length;
+           noteObject = song.notes.map((stave_note) => {return NoteForMidiPlayer(stave_note)});
+           noteStr = song.notes.map((stave_note) => {return NoteForVex(stave_note)})
+           noteDelay = noteObject.map((stave_note) => {
+            return(
+              stave_note.map((note) => {
+                return Tone.Time(note.noteDuration).toSeconds()
+              })
+            )
+          } )
+        }
+
         console.log({noteObject});
         // Default state
         this.state = {
             // stave_notes: song.notes,
             stave_notes: noteStr,
-            notes_title: song.title,
-            lyrics: song.lyric,
-            image: song.image,
+            notes_title: title,
+            lyrics: lyrics,
+            image: image,
             showAll: false,
-            stavesCount : song.notes.length,
+            stavesCount : stavesCount,
             staveIndex: 0,
             showBackButton: false,
             showFrontButton: true,
@@ -98,6 +112,7 @@ class notesRender extends Component {
             printedText: [],
             showPrint: false,
             modalVisible: false,
+            songInputAvailable:false,
         };
     };
 
@@ -124,6 +139,38 @@ class notesRender extends Component {
     //
     // }
 
+    initializeSong = () => {
+      let {song} = this.props
+
+      let title = song.title;
+      let  lyrics = song.lyric;
+      let  image = song.image;
+      let  stavesCount = song.notes.length;
+      let  noteObject = song.notes.map((stave_note) => {return NoteForMidiPlayer(stave_note)});
+      let  noteStr = song.notes.map((stave_note) => {return NoteForVex(stave_note)})
+      let  noteDelay = noteObject.map((stave_note) => {
+         return(
+           stave_note.map((note) => {
+             return Tone.Time(note.noteDuration).toSeconds()
+           })
+         )
+       } )
+
+       this.setState({
+            // stave_notes: song.notes,
+            stave_notes: noteStr,
+            notes_title: title,
+            lyrics: lyrics,
+            image: image,
+            showAll: false,
+            stavesCount : stavesCount,
+            // noteText:noteText,
+            noteObject: noteObject,
+            noteDelay: noteDelay,
+            songInputAvailable: true,
+     })
+
+    }
     playThisNote = (i) => {
 
       let {noteObject, staveIndex} = this.state
@@ -364,9 +411,9 @@ class notesRender extends Component {
         console.log('Playback resumed successfully');
       });
 
-      this.setState({
-        stavesCount: this.state.stave_notes.length,
-      })
+      // this.setState({
+      //   stavesCount: this.state.stave_notes.length,
+      // })
 
       window.setInterval(() => {
 
@@ -1288,10 +1335,15 @@ class notesRender extends Component {
 
 
         let {showAll, webMidiEnabled, noteObject, staveIndex,  scrollView, allNotesCompleted, allLinesCompleted, lyrics,
-           showLine,  playNotes, firstTime,choiceVisibility, errorCount, errorScreenMode, songMenuVisibility, image} = this.state
+           showLine,songInputAvailable,  playNotes, firstTime,choiceVisibility, errorCount, errorScreenMode, songMenuVisibility, image} = this.state
 
           //  this.checkForMidi()
-
+        
+        let {song} = this.props
+        
+        if (song && !songInputAvailable ) {
+          this.initializeSong();
+        }
 
         let header = (
           <div>
@@ -1315,7 +1367,7 @@ class notesRender extends Component {
         return (
               <div className="notesPage" >
                   {this.headerBox()}
-                  {firstTime?
+                  {firstTime && this.props.song?
                     <div>
                       <Animated animationIn="fadeIn" animationOut="fadeOut" isVisible={songMenuVisibility}>
                         <div className="songOptionBox" style={{  backgroundImage:backgroundImage, backgroundColor:'transparent' }}>
