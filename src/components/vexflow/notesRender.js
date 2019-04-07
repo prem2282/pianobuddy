@@ -10,7 +10,7 @@ import OneNoteSound from "./oneNoteSound";
 import Delayed from '../..//components/common/delayed';
 import './notes.css';
 import {Animated} from 'react-animated-css';
-import {Icon, message} from 'antd';
+import {Icon, message, Modal} from 'antd';
 import ReactDOM from 'react-dom';
 import WebMidi from 'webmidi';
 // import MIDI from 'midi.js';
@@ -95,8 +95,9 @@ class notesRender extends Component {
             allNotesCompleted: false,
             allLinesCompleted: false,
             keyInputDetails: null,
-
-
+            printedText: [],
+            showPrint: false,
+            modalVisible: false,
         };
     };
 
@@ -206,7 +207,7 @@ class notesRender extends Component {
         // console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ").");
         // console.log("key details:", e)
 
-        let {practice,scrollView, keyInputDetails, allNotesCompleted,allLinesCompleted, staveIndex, stavesCount, scrollview} = this.state
+        let {practice,scrollView, keyInputDetails, allNotesCompleted,allLinesCompleted, scrollview} = this.state
 
 
       if (e !== keyInputDetails) {
@@ -260,7 +261,7 @@ class notesRender extends Component {
       if (durationVex === 'qr' || durationVex === 'hr') {
         //dont play. its a pause''
       } else {
-        output.playNote(noteKey, 16, {duration:noteDuration, time:delayTime})      
+        output.playNote(noteKey, 1, {duration:noteDuration, time:delayTime})      
     }
 
       let notesCount = currentStaveNotes.length
@@ -276,6 +277,16 @@ class notesRender extends Component {
 
     }
 
+    addPrintedText = (text) => {
+      let {printedText} = this.state
+      printedText.push(text)
+  
+      this.setState({
+        printedText: printedText,
+     })
+    }
+
+
 
     checkForMidi = () => {
         // console.clear();
@@ -289,7 +300,9 @@ class notesRender extends Component {
         // console.log(WebMidi)
         if (WebMidi.outputs.length === 0) {
           // console.log("output not found");
-          message('midi device lost');
+          message.info('midi device lost');
+
+
           this.setState({
             webMidiEnabled: false,
             webMidiInitialized: false,
@@ -318,8 +331,8 @@ class notesRender extends Component {
           })
         } else {
 
-          // console.log(WebMidi.inputs);
-          // console.log(WebMidi.outputs);
+          console.log(WebMidi.inputs);
+          console.log(WebMidi.outputs);
 
           if (WebMidi.inputs.length > 0) {
 
@@ -330,7 +343,10 @@ class notesRender extends Component {
             ((e) => {this.keyInputReceived(e)})
            )
 
-            message('midi device connected');
+            this.addPrintedText(input.connection + input.id + input.manufacturer + input.name + input.state);
+            this.addPrintedText(output.connection + output.id + output.manufacturer + output.name + output.state);
+
+            message.info('midi device connected');
             console.log("output found");
             this.setState({
               webMidiEnabled: true,
@@ -434,13 +450,33 @@ class notesRender extends Component {
 
     }
 
+    showModal = () => {
+      this.setState({
+        modalVisible: true,
+      });
+    }
+
+    handleOk = (e) => {
+      console.log(e);
+      this.setState({
+        modalVisible: false,
+      });
+    }
+  
+    handleCancel = (e) => {
+      console.log(e);
+      this.setState({
+        modalVisible: false,
+      });
+    }
+
     setClassForNoteBGYes = (keyInputDetails,source) => {
 
       let playedNote = ''
       let {noteClass, staveIndex, noteObject, errorCount, stavesCount, } = this.state;
       let currentStaveNotes = noteObject[staveIndex];
       let noteNumToCheck = noteClass.length;
-      let {noteString, noteScale, durationVex} = noteObject[staveIndex][noteNumToCheck]
+      let {noteString, noteScale} = noteObject[staveIndex][noteNumToCheck]
       let noteToCheck = noteString + noteScale
 
       if (source === 'onScreen') {
@@ -877,7 +913,7 @@ class notesRender extends Component {
 
             let options = (
               <Animated className="navButtonBox" animationIn="fadeIn" animationOut="zoomOut" isVisible={true}>
-                <div className="notesNavButton"
+                <div className="notesNavButton" onClick={this.showModal}
                 >
                 <Icon type="setting" />
               </div>
@@ -1415,6 +1451,24 @@ class notesRender extends Component {
                             />
                     </Animated>
                   </div>
+                  {this.state.modalVisible?
+                    <div>
+                      <Modal
+                        title="Basic Modal"
+                        visible={this.state.modalVisible}
+                        onOk={this.handleOk}
+                        onCancel={this.handleCancel}
+                      >
+                        {this.state.printedText.map((text) => {
+                          return(
+                            <p>{text}</p>
+                          )
+                        })}
+                      </Modal>                      
+
+                    </div>
+                    :null
+                  }
 
               </div>
 
