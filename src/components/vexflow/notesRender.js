@@ -1182,6 +1182,9 @@ class notesRender extends Component {
       let {firstTime} = this.state
 
       if (firstTime) {
+        this.setState({
+          songInputAvailable: false
+        })
         this.props.homeButton();
       }
       this.setState({
