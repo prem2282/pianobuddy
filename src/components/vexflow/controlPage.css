@@ -1,40 +1,150 @@
 
-.controlMenuContainer {
-  display: flex;
-  justify-content: flex-start;
-  align-items:center;;
-  align-content: center;
-  height: 90vh;
-  background-color: Beige;
-  overflow: scroll;
-}
-
-.controlMenuContainer1 {
+.controlMenuContainer0 {
   display: flex;
   justify-content: center;
+  align-items:center;
+  align-content: center;
+  height: 90vh;
+  /*background-color: #D6DFE1;*/
+  background-image: url('./..//media/pianoback1.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: scroll;
+  -webkit-transition: background 500ms linear;
+  -ms-transition: background 500ms linear;
+  transition: background 500ms linear;
+}
+
+.lessonNumBox {
+  border-radius: 2rem;
+  margin-right: .5rem;
+  /*margin-left: .5rem;*/
+  padding-right: 1rem;
+  padding-left:  1rem;
+  background-color: DarkSlateBlue;
+  font-family: 'Pompiere', cursive;
+  font-size: 1.8rem;
+  opacity: 1;
+  color: gold;
+  font-weight: bold;
+}
+.controlMenuContainer {
+  display: flex;
+  grid-template-columns: 100%;
   align-items:center;;
   align-content: center;
   height: 90vh;
-  background-color: Beige;
+  /*background-color: LightSkyBlue;
+  background: #ADBFC4;*/
   overflow: scroll;
+  background-image: url('./..//media/pianoback2.jpg');
+  background-repeat: repeat;
+  background-size: cover;
+  -webkit-transition: background 500ms linear;
+  -ms-transition: background 500ms linear;
+  transition: background 500ms linear;
+}
+
+
+.controlMenuContainer2 {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  justify-content: center;
+  align-items:center;
+  align-content: center;
+
+  height: 90vh;
+  background-color: #307B93;
+  overflow: scroll;
+  background-image: url('./..//media/pianoback2.jpg');
+  background-repeat: repeat;
+  background-size: cover;
+  -webkit-transition: background 500ms linear;
+  -ms-transition: background 500ms linear;
+  transition: background 500ms linear;
+}
+
+.songCategoryContainer {
+  display: grid;
+  grid-template-columns: 32% 32% 32%;
+  align-items:center;;
+  align-content: center;
+  justify-content: center;
+  height: 90vh;
+  /*background-color: LightSkyBlue;
+  background: #ADBFC4;*/
+  overflow: scroll;
+  background-image: url('./..//media/pianoback3.jpg');
+  background-repeat: repeat;
+  background-size: cover;
+  -webkit-transition: background 500ms linear;
+  -ms-transition: background 500ms linear;
+  transition: background 500ms linear;
+}
+
+.ragaCategoryContainer {
+  display: grid;
+  grid-template-columns: 25% 25% 25% 25%;
+  align-items:center;;
+  align-content: center;
+  justify-content: center;
+  height: 90vh;
+  /*background-color: LightSkyBlue;
+  background: #ADBFC4;*/
+  overflow: scroll;
+  background-image: url('./..//media/pianoback4.jpg');
+  background-repeat: repeat;
+  background-size: cover;
+  -webkit-transition: background 500ms linear;
+  -ms-transition: background 500ms linear;
+  transition: background 500ms linear;
 }
 
 .controlMenuOne{
-/*display: inline-block;*/
-background-color: IndianRed;
+display: inline-flex;;
+background-color: Indigo;
 color: white;
 cursor: pointer;
 /*align-self: center;*/
-min-height: 5rem;
-max-height: 10rem;
-min-width: 15rem;
-max-width: 20rem;
+min-height:  3rem;
+max-height: 6rem;
+min-width: 10rem;
+max-width: 15rem;
 margin: .5em;
 padding: .5em;
 border-radius: 3rem;
 font-family: 'Pompiere', cursive;
-font-size: 2rem;
+font-size: 1.5rem;
 justify-content: center;
+align-items: center;
+align-content: center;
+text-align: center;
+opacity: .8;
+box-shadow: .5rem .5rem .25rem DarkSlateGray;
+}
+
+.ragaCategoryButton{
+display: inline-block;;
+background-color: #1C1619;
+color: #AEABAD;
+cursor: pointer;
+justify-content: center;
+min-height:  2rem;
+max-height: 5rem;
+min-width: 5rem;
+max-width: 10rem;
+margin: .5rem;
+padding: .5rem 1rem .5rem 1rem;
+border-radius: 3rem;
+font-family: 'Pompiere', cursive;
+font-size: 2rem;
+font-weight: bold;
+justify-content: center;
+align-items: center;
+align-content: center;
+text-align: center;
+opacity: .8;
+box-shadow: .5rem .5rem .25rem DarkSlateGray;
 }
 
 .menuNavButton{
@@ -54,7 +164,7 @@ justify-content: center;
 .menuButtonBox {
   display: flex;
   justify-content: center;
-  background-color: IndianRed;
+  /*background-color: Indigo;*/
   margin-bottom: 0px;
 }
 .menuHeaderBox{
@@ -62,7 +172,11 @@ display: grid;
 grid-template-columns: 10% 80% 10%;
 padding-right: 10%;
 padding-left: 10%;
-background: IndianRed;
+padding-bottom: 6%;
+background: Indigo;
 margin-bottom: 0;
 height: 10vh;
+color: Aqua;
+font-family: 'Pompiere', cursive;
+font-size: 2rem;
 }

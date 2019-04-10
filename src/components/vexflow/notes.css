@@ -21,6 +21,10 @@
   width: 100%;
 }
 
+.PianoOne {
+  display: block;  
+}
+
 .midiSoundsClass {
   height: 0px;
   position: fixed;
@@ -44,6 +48,42 @@
   justify-content: center;
 }
 
+.custom .ant-modal-body {
+  padding: 0px;
+  margin: 0px;
+}
+.custom .ant-modal-content{
+  background-color: #1C1619;
+  opacity: .9;
+}
+
+.custom .ant-modal-header{
+    background-color: transparent;;
+}
+
+.custom .ant-modal-title{
+  color: gold;
+  font-family: 'Pompiere', cursive;
+  font-size: 2rem;
+}
+
+.custom .ant-modal-close{
+  color: gold;
+}
+.songInfoButton{
+display: inline-block;;
+background-color: transparent;;
+color: White;
+opacity: .6;
+cursor: pointer;
+/*margin: .5rem;*/
+padding: .5rem;
+/*border-radius: 3rem;*/
+font-family: 'Pompiere', cursive;
+font-size: 2rem;
+justify-content: center;
+
+}
 .songOptionButton{
 display: inline-block;;
 background-color: IndianRed;
@@ -163,6 +203,11 @@ grid-template-columns: 65px 200px 200px 200px;
 padding-left: 10%;
 }
 
+.showAllContainer{
+  margin: .5rem;
+  background: #C4C6A2;
+  padding: .1rem;
+}
 .noteBox{
   display: grid;
   grid-template-columns: 100%;

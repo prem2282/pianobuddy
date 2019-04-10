@@ -37,6 +37,9 @@ export default class SingleNote extends Component {
         if (duration === '8') {
             return noteWidth/2;
         }
+        if (duration === '8r') {
+            return noteWidth/2;
+        }
         if (duration === '16') {
             return noteWidth/2;
         }
@@ -57,6 +60,9 @@ export default class SingleNote extends Component {
             return 4;
         }
         if (duration === '8') {
+            return .5;
+        }
+        if (duration === '8r') {
             return .5;
         }
         if (duration === '16') {

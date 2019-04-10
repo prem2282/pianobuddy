@@ -1,5 +1,3 @@
-
-
 import React, {Component} from 'react';
 import Clef from "./clefandtime";
 // import Voice from "./voice";
@@ -16,13 +14,13 @@ import WebMidi from 'webmidi';
 // import MIDI from 'midi.js';
 import MIDISounds from 'midi-sounds-react';
 import Tone from 'tone';
-import NoteFormation from './noteFormation';
-import NoteForTone from './noteForTone';
+// import NoteFormation from './noteFormation';
+// import NoteForTone from './noteForTone';
 import NoteForVex from './noteForVex';
 import NoteForMidiPlayer from './noteForMidiPlayer';
 import SingleNote from './singleNote3';
 import PianoKeys from './pianoKeys';
-
+import PianoKeysOne from './pianoKeysOne';
 // import WebAudio from './webAudioFontDemo';
 import NoteToNum from './noteToNum';
 
@@ -30,7 +28,7 @@ let whiteKeys = [0,2,4,5,7,9,11];
 let input = null;
 let output = null;
 let context = new AudioContext();
-let instrument = 3;
+let instrument = 771;
 let noteIndex = 0;
 let synth = new Tone.Synth().toMaster()
 let transport = Tone.Transport;
@@ -40,10 +38,6 @@ class notesRender extends Component {
         super(props);
 
         let {song} = this.props
-        // let noteText = song.notes.map((stave_note) => { return NoteForTone(stave_note)});
-        // console.log(
-        //   {noteText}
-        // );
         let noteObject = null;
         let noteStr = null;
         let noteDelay = null;
@@ -51,10 +45,12 @@ class notesRender extends Component {
         let stavesCount = 0;
         let lyrics = null;
         let image = null;
+        let info = '';
         if (song) {
            title = song.title;
            lyrics = song.lyric;
            image = song.image;
+           info = song.info;
            stavesCount = song.notes.length;
            noteObject = song.notes.map((stave_note) => {return NoteForMidiPlayer(stave_note)});
            noteStr = song.notes.map((stave_note) => {return NoteForVex(stave_note)})
@@ -74,6 +70,7 @@ class notesRender extends Component {
             stave_notes: noteStr,
             notes_title: title,
             lyrics: lyrics,
+            info: info,
             image: image,
             showAll: false,
             stavesCount : stavesCount,
@@ -144,6 +141,7 @@ class notesRender extends Component {
 
       let title = song.title;
       let  lyrics = song.lyric;
+      let  info = song.info;
       let  image = song.image;
       let  stavesCount = song.notes.length;
       let  noteObject = song.notes.map((stave_note) => {return NoteForMidiPlayer(stave_note)});
@@ -161,6 +159,7 @@ class notesRender extends Component {
             stave_notes: noteStr,
             notes_title: title,
             lyrics: lyrics,
+            info: info,
             image: image,
             showAll: false,
             stavesCount : stavesCount,
@@ -194,7 +193,7 @@ class notesRender extends Component {
       // console.log({noteNum});
       let duration = Tone.Time(noteDuration).toSeconds();
       // console.log({duration});
-      if (durationVex === 'qr' || durationVex === 'hr'  ) {
+      if (durationVex === 'qr' || durationVex === 'hr' || durationVex === '8r'  ) {
         //this is a pause. so dont play it
       } else {
         this.midiSounds.playChordNow(instrument, [noteNum], duration)
@@ -301,14 +300,14 @@ class notesRender extends Component {
       console.log(noteDuration);
 
       let noteDetails = currentStaveNotes[index-1]
-      
+
       let noteKey = noteDetails.noteString + noteDetails.noteScale;
       delayTime = "+" + delayTime
       // console.log({noteKey})
-      if (durationVex === 'qr' || durationVex === 'hr') {
+      if (durationVex === 'qr' || durationVex === 'hr' || durationVex === '8r' ) {
         //dont play. its a pause''
       } else {
-        output.playNote(noteKey, 1, {duration:noteDuration, time:delayTime})      
+        output.playNote(noteKey, 1, {duration:noteDuration, time:delayTime})
     }
 
       let notesCount = currentStaveNotes.length
@@ -327,7 +326,7 @@ class notesRender extends Component {
     addPrintedText = (text) => {
       let {printedText} = this.state
       printedText.push(text)
-  
+
       this.setState({
         printedText: printedText,
      })
@@ -378,8 +377,8 @@ class notesRender extends Component {
           })
         } else {
 
-          console.log(WebMidi.inputs);
-          console.log(WebMidi.outputs);
+          // console.log(WebMidi.inputs);
+          // console.log(WebMidi.outputs);
 
           if (WebMidi.inputs.length > 0) {
 
@@ -485,8 +484,8 @@ class notesRender extends Component {
       let {noteClass, staveIndex, noteObject } = this.state;
       let noteNumToCheck = noteClass.length;
       let {durationVex} = noteObject[staveIndex][noteNumToCheck];
- 
-      if (durationVex === 'qr' || durationVex === 'hr') {
+
+      if (durationVex === 'qr' || durationVex === 'hr' || durationVex === '8r' ) {
         noteClass.push('correctNoteBoxBG')
         this.setState({
           noteClass: noteClass,
@@ -509,7 +508,7 @@ class notesRender extends Component {
         modalVisible: false,
       });
     }
-  
+
     handleCancel = (e) => {
       console.log(e);
       this.setState({
@@ -778,6 +777,9 @@ class notesRender extends Component {
             case "8":
               noteCount = noteCount +  .5
               break;
+            case "8r":
+              noteCount = noteCount +  .5
+              break;
             case "16":
             noteCount = noteCount +  .25
               break;
@@ -841,8 +843,8 @@ class notesRender extends Component {
       let vexFlowNote = this.noteForVexFlowNew(note);
 
       let noteKey = note.noteString + note.noteScale;
-      
-      if (note.durationVex === 'qr' || note.durationVex ==='hr'){
+
+      if (note.durationVex === 'qr' || note.durationVex ==='hr' || note.durationVex ==='8r'){
         noteKey = ''
       }
 
@@ -1333,30 +1335,20 @@ class notesRender extends Component {
 
 
     }
-    render() {
+
+    showInfo = () => {
+
+    }
+
+    renderPage = () => {
 
 
 
-        let {showAll, webMidiEnabled, noteObject, staveIndex,  scrollView, allNotesCompleted, allLinesCompleted, lyrics,
+        let {showAll, webMidiEnabled, noteObject, staveIndex,  scrollView, allNotesCompleted, allLinesCompleted, lyrics, info,
            showLine,songInputAvailable,  playNotes, firstTime,choiceVisibility, errorCount, errorScreenMode, songMenuVisibility, image} = this.state
-
-          //  this.checkForMidi()
-        
-        let {song} = this.props
-        
-        if (song && !songInputAvailable ) {
-          this.initializeSong();
-        }
 
         let header = (
           <div>
-          </div>
-        )
-        let headerOld = (
-          <div className="notesHeaderBox">
-            <h4 id='backToTop' onClick={this.backToTop}>back</h4>
-            <h1 className="notesHeaderText">{this.state.notes_title}</h1>
-            {/* <h2 className="notesHeaderText" onClick={() => this.showAllClicked()}> {showButtonText} </h2> */}
           </div>
         )
 
@@ -1367,134 +1359,172 @@ class notesRender extends Component {
             backgroundImage = "linear-gradient( rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7) )," + imageUrl
         }
 
+        let mainMenu = (
+          <div>
+            <Animated animationIn="fadeIn" animationOut="fadeOut" isVisible={songMenuVisibility}>
+              <div className='PianoOne'>
+              </div>
+              <div className="songOptionBox" style={{  backgroundImage:backgroundImage, backgroundColor:'transparent' }}>
+                <h2 className="songOptionHeaderText">{this.state.notes_title}</h2>
+                <PianoKeysOne/>
+                <Animated animationIn="bounceIn" animationOut="bounceOut" isVisible={songMenuVisibility}>
+                  <h2 id='practice' className="songOptionButton" onClick={(e) => this.resetSwitches(e)}>Easy Practice</h2>
+                  <h2 id='scroll' className="songOptionButton" onClick={(e) => this.resetSwitches(e)}>Hard Practice</h2>
+                  <h2 id='showAll' className="songOptionButton" onClick={(e) => this.resetSwitches(e)}>Show All Notes</h2>
+                </Animated>
+              </div>
+            </Animated>
+          </div>
+        )
+
+        let showAllScreen = (
+          <Animated animationIn="fadeIn" animationOut="zoomOut" isVisible={showAll}>
+          {noteObject.map((stave_note,i) => {
+            return(
+              <div className='showAllContainer'>
+                {this.lineBox(stave_note,i)}
+              </div>
+            )
+          })}
+          </Animated>
+        )
+
+        let showOneLine = (
+          <Animated  animationIn="fadeIn" animationOut="fadeInRight" isVisible={showLine}>
+              {this.lineBox(noteObject[staveIndex],staveIndex)}
+          </Animated>
+        )
+
+        let endOfSongScreen = (
+          <Animated  animationIn="zoomIn" animationOut="bounceOut" isVisible={choiceVisibility}>
+            <div className="choiceContainer">
+              <div className="whiteKeyChoice" onClick={() => this.processSongCompletion(true,'onScreen')}>
+                Redo
+              </div>
+              <div className="blackKeyChoice" onClick={() => this.processSongCompletion(false,'onScreen')}>
+                Back
+              </div>
+
+
+            </div>
+          </Animated>
+        )
+
+        let promptUserForNextLine = (
+          <Animated  animationIn="zoomIn" animationOut="bounceOut" isVisible={choiceVisibility}>
+            <h2 className="errorTxtOne"> You are very Close! </h2>
+            <div className="choiceContainer">
+              <div className="whiteKeyChoice" onClick={() => this.processLineSelection(true,'onScreen')}>
+                Redo
+              </div>
+              <div className="blackKeyChoice" onClick={() => this.processLineSelection(false,'onScreen')}>
+               Next
+              </div>
+
+
+            </div>
+          </Animated>
+        )
+
+        let showErrorScreen = (
+          <div className="errorContainer">
+            <Animated  animationIn="bounceIn" animationOut="bounceOut" isVisible={choiceVisibility}>
+              <h2 className="errorTxtOne">{errorCount} errors. </h2>
+            </Animated>
+              <Animated  animationIn="zoomIn" animationOut="bounceOut"  isVisible={choiceVisibility}>
+                  <h1 className="errorTxtTwo">Lets try again</h1>
+              </Animated>
+          </div>
+        )
+
+        let showPerfectScreen = (
+          <div className="errorContainer">
+            <Animated  animationIn="bounceIn" animationOut="bounceOut" isVisible={choiceVisibility}>
+              <h2 className="errorTxtOne">Perfect!</h2>
+            </Animated>
+              <Animated  animationIn="zoomIn" animationOut="bounceOut"  isVisible={choiceVisibility}>
+                  <h1 className="errorTxtTwo">Lets move on to the next one</h1>
+              </Animated>
+          </div>
+        )
+
+        let showScrollView = (
+          <ScrollView
+          notes = {noteObject}
+          keyInputDetails={this.state.keyInputDetails}
+          stavesCount = {this.state.stavesCount}
+          lyrics={lyrics}
+          keyBoardConnection = {webMidiEnabled}
+          scrollCompleted = {this.scrollCompleted}
+          />
+        )
+
+        let scrollViewSongCompleted = (
+          <Animated  animationIn="zoomIn" animationOut="bounceOut" isVisible={choiceVisibility}>
+          <h1>Song Completed!</h1>
+            <div className="choiceContainer">
+              <div className="whiteKeyChoice" onClick={() => this.processSongCompletion(true,'onScreen')}>
+                Redo
+              </div>
+              <div className="blackKeyChoice" onClick={() => this.processSongCompletion(false,'onScreen')}>
+                Back
+              </div>
+
+
+            </div>
+          </Animated>
+        )
+
         return (
               <div className="notesPage" >
                   {this.headerBox()}
                   {firstTime && this.props.song?
-                    <div>
-                      <Animated animationIn="fadeIn" animationOut="fadeOut" isVisible={songMenuVisibility}>
-                        <div className="songOptionBox" style={{  backgroundImage:backgroundImage, backgroundColor:'transparent' }}>
-                          <h2 className="songOptionHeaderText">{this.state.notes_title}</h2>
-                          <Animated animationIn="bounceIn" animationOut="bounceOut" isVisible={songMenuVisibility}>
-                            <h2 id='practice' className="songOptionButton" onClick={(e) => this.resetSwitches(e)}>Easy Practice</h2>
-                            <h2 id='scroll' className="songOptionButton" onClick={(e) => this.resetSwitches(e)}>Hard Practice</h2>
-                            <h2 id='showAll' className="songOptionButton" onClick={(e) => this.resetSwitches(e)}>Show All Notes</h2>
-                          </Animated>
-                        </div>
-                      </Animated>
-                    </div>
+                    mainMenu
                   :
                   <div>
                     {showAll?
-                      <Animated animationIn="fadeIn" animationOut="zoomOut" isVisible={showAll}>
-                      {noteObject.map((stave_note,i) => {
-                        return(
-                          this.lineBox(stave_note,i)
-                        )
-                      })}
-                      </Animated>
+                      showAllScreen
                       :
                       null
                     }
                     {playNotes && !allNotesCompleted?
-                      <Animated  animationIn="fadeIn" animationOut="fadeInRight" isVisible={showLine}>
-                          {this.lineBox(noteObject[staveIndex],staveIndex)}
-                      </Animated>
+                      showOneLine
                       :null
                     }
 
                     {(allLinesCompleted  &&  allNotesCompleted)?
-                      <Animated  animationIn="zoomIn" animationOut="bounceOut" isVisible={choiceVisibility}>
-                        <div className="choiceContainer">
-                          <div className="whiteKeyChoice" onClick={() => this.processSongCompletion(true,'onScreen')}>
-                            Redo
-                          </div>
-                          <div className="blackKeyChoice" onClick={() => this.processSongCompletion(false,'onScreen')}>
-                            Back
-                          </div>
-
-
-                        </div>
-                      </Animated>
+                      endOfSongScreen
                       :null
 
                     }
 
                     {(allNotesCompleted && !allLinesCompleted && errorScreenMode==='ok')?
-                      <Animated  animationIn="zoomIn" animationOut="bounceOut" isVisible={choiceVisibility}>
-                        <h2 className="errorTxtOne"> You are very Close! </h2>
-                        <div className="choiceContainer">
-                          <div className="whiteKeyChoice" onClick={() => this.processLineSelection(true,'onScreen')}>
-                            Redo
-                          </div>
-                          <div className="blackKeyChoice" onClick={() => this.processLineSelection(false,'onScreen')}>
-                           Next
-                          </div>
-
-
-                        </div>
-                      </Animated>
+                      promptUserForNextLine
                       :
                       null
                     }
 
                     {(allNotesCompleted && !allLinesCompleted && errorScreenMode==='error')?
-                      <div className="errorContainer">
-                        <Animated  animationIn="bounceIn" animationOut="bounceOut" isVisible={choiceVisibility}>
-                          <h2 className="errorTxtOne">{errorCount} errors. </h2>
-                        </Animated>
-                          <Animated  animationIn="zoomIn" animationOut="bounceOut"  isVisible={choiceVisibility}>
-                              <h1 className="errorTxtTwo">Lets try again</h1>
-                          </Animated>
-                      </div>
+                      showErrorScreen
                       :null
                     }
 
                     {(allNotesCompleted && !allLinesCompleted && errorScreenMode==='perfect')?
-                      <div className="errorContainer">
-                        <Animated  animationIn="bounceIn" animationOut="bounceOut" isVisible={choiceVisibility}>
-                          <h2 className="errorTxtOne">Perfect!</h2>
-                        </Animated>
-                          <Animated  animationIn="zoomIn" animationOut="bounceOut"  isVisible={choiceVisibility}>
-                              <h1 className="errorTxtTwo">Lets move on to the next one</h1>
-                          </Animated>
-                      </div>
+                      showPerfectScreen
                       :null
                     }
 
                     {scrollView && !allLinesCompleted?
-                      <ScrollView
-                      notes = {noteObject}
-                      keyInputDetails={this.state.keyInputDetails}
-                      stavesCount = {this.state.stavesCount}
-                      lyrics={lyrics}
-                      keyBoardConnection = {webMidiEnabled}
-                      scrollCompleted = {this.scrollCompleted}
-                      />
+                      showScrollView
                       :
                       null
 
                     }
                     {scrollView && allLinesCompleted?
-
-                      <Animated  animationIn="zoomIn" animationOut="bounceOut" isVisible={choiceVisibility}>
-                      <h1>Song Completed!</h1>
-                      <div className="choiceContainer">
-                        <div className="whiteKeyChoice" onClick={() => this.processSongCompletion(true,'onScreen')}>
-                          Redo
-                        </div>
-                        <div className="blackKeyChoice" onClick={() => this.processSongCompletion(false,'onScreen')}>
-                          Back
-                        </div>
-
-
-                      </div>
-                    </Animated>
+                      scrollViewSongCompleted
                       :
                       null
-
                     }
-
                   </div>
                   }
                   <div className="midiSoundsClass">
@@ -1509,17 +1539,15 @@ class notesRender extends Component {
                   {this.state.modalVisible?
                     <div>
                       <Modal
-                        title="Basic Modal"
+                        title="Info"
                         visible={this.state.modalVisible}
                         onOk={this.handleOk}
                         onCancel={this.handleCancel}
+                        className="custom"
+                        footer={null}
                       >
-                        {this.state.printedText.map((text) => {
-                          return(
-                            <p>{text}</p>
-                          )
-                        })}
-                      </Modal>                      
+                      <h1 className="songInfoButton">{info}</h1>
+                      </Modal>
 
                     </div>
                     :null
@@ -1531,11 +1559,40 @@ class notesRender extends Component {
 
       // }
     }
+
+    render () {
+
+      let {songInputAvailable} = this.state
+
+
+      let {song} = this.props
+
+      if (song && !songInputAvailable ) {
+        this.initializeSong();
+      }
+
+      if (songInputAvailable) {
+        return (
+          <div>
+          {this.renderPage()}
+          </div>
+        )
+      } else {
+        return(
+          <div></div>
+        )
+      }
+    }
 }
 
 export default notesRender;
 
 
+// {this.state.printedText.map((text) => {
+//   return(
+//     <p>{info}</p>
+//   )
+// })}
 
 // <Stave notes={this.state.stave_notes}/>
 // <Stave notes={this.state.stave_notes}/>

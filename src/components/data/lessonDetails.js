@@ -3,6 +3,7 @@ const LessonDetails = [
     {
         id: 1,
         title: 'Start with C D E',
+        info: 'Place your Right hand thumb on the Middle C. Use Index finger for D and Middle fingers for E',
         notes: [
           'C D E',
           'E D C',
@@ -24,6 +25,7 @@ const LessonDetails = [
     {
         id: 2,
         title: 'More of C D E',
+        info: 'C D E with some more patterns. You know the finger positions',
         notes: [
           'C D C D C D',
           'D C D C D C',
@@ -108,6 +110,7 @@ const LessonDetails = [
     {
         id: 3,
         title: 'Add F & G',
+        info: 'You will now use all your fingers. Ring finger (4th) and pinky (5th) will play notes G & F',
         notes: [
             'C D E F G',
             'G F E D C',
@@ -116,7 +119,7 @@ const LessonDetails = [
             'C D E F G F E D C',
             'G F E D C D E F G',
             'C D C D E F E F G',
-            'G F G F E D E D C',            
+            'G F G F E D E D C',
            ],
         lyric: [
 
@@ -124,18 +127,19 @@ const LessonDetails = [
     },
     {
         id: 4,
-        title: 'Skip keys',
+        title: 'Skip notes',
+        info: 'Watch out for notes skipped. You will use only 3 fingers out of 5 in each line',
         notes: [
             'C E C E C E',
-            'E G E G E G',   
-            'C E G C E G',    
-            'G E C G E C',  
-            'C E G G E C',  
-            'G E C C E G',  
+            'E G E G E G',
+            'C E G C E G',
+            'G E C G E C',
+            'C E G G E C',
+            'G E C C E G',
             'D F D F D F',
             'F D F D F D',
-            'D D F F D F',    
-            'F F D D F D',            
+            'D D F F D F',
+            'F F D D F D',
            ],
         lyric: [
 
@@ -144,14 +148,15 @@ const LessonDetails = [
     {
         id: 5,
         title: 'Jump and Go',
+        info: 'Jump a note and play the rest',
         notes: [
             'C E F G C',
             'C D F G C',
-            'C D E G C',  
-            'C D E F C',   
-            'C D E F G C E F G C',   
-            'C D E F G C D F G C',   
-            'C D E F G C D E G C', 
+            'C D E G C',
+            'C D E F C',
+            'C D E F G C E F G C',
+            'C D E F G C D F G C',
+            'C D E F G C D E G C',
             'C D E F G C D E F C',
            ],
         lyric: [
@@ -161,16 +166,17 @@ const LessonDetails = [
     {
         id: 6,
         title: 'Jump and Go reverse',
+        info: 'Now jump in the reverse direction. Start with your Pinky',
         notes: [
             'G E D C G',
             'G F D C G',
-            'G F E D G',  
-            'G F E C G',   
-            'G F E D C G E D C G',  
-            'G F E D C G F D C G',   
-            'G F E D C G F E D G',   
-            'G F E D C G F E C G',   
-             
+            'G F E D G',
+            'G F E C G',
+            'G F E D C G E D C G',
+            'G F E D C G F D C G',
+            'G F E D C G F E D G',
+            'G F E D C G F E C G',
+
            ],
         lyric: [
 
