@@ -24,6 +24,7 @@ import PianoKeysOne from './pianoKeysOne';
 // import WebAudio from './webAudioFontDemo';
 import NoteToNum from './noteToNum';
 
+let enableExternalSound = false;
 let whiteKeys = [0,2,4,5,7,9,11];
 let input = null;
 let output = null;
@@ -110,6 +111,7 @@ class notesRender extends Component {
             showPrint: false,
             modalVisible: false,
             songInputAvailable:false,
+            // enableExternalSound: false,
         };
     };
 
@@ -182,22 +184,24 @@ class notesRender extends Component {
         this.setState({
           notesPlayEnded: true,
         })
+      } else {
+        // let {noteObject} =
+        console.log({noteObject})
+        // let instrument = 3;
+        let {noteString, noteDuration, noteScale, durationVex} = thisNoteObject
+        // console.log({noteString},{noteDuration},{noteScale});
+        let noteNum = NoteToNum(noteString) + Number(noteScale)*12;
+        // console.log({noteNum});
+        let duration = Tone.Time(noteDuration).toSeconds();
+        // console.log({duration});
+        if (durationVex === 'qr' || durationVex === 'hr' || durationVex === '8r'  ) {
+          //this is a pause. so dont play it
+        } else {
+          this.midiSounds.playChordNow(instrument, [noteNum], duration)
+        }
       }
 
-      // let {noteObject} =
-      // console.log({noteObject})
-      // let instrument = 3;
-      let {noteString, noteDuration, noteScale, durationVex} = thisNoteObject
-      // console.log({noteString},{noteDuration},{noteScale});
-      let noteNum = NoteToNum(noteString) + Number(noteScale)*12;
-      // console.log({noteNum});
-      let duration = Tone.Time(noteDuration).toSeconds();
-      // console.log({duration});
-      if (durationVex === 'qr' || durationVex === 'hr' || durationVex === '8r'  ) {
-        //this is a pause. so dont play it
-      } else {
-        this.midiSounds.playChordNow(instrument, [noteNum], duration)
-      }
+
 
 
 
@@ -496,9 +500,14 @@ class notesRender extends Component {
 
     }
 
-    showModal = () => {
+    showModal = (type) => {
+      let infoInModal = this.state.info
+      if (type ='dev') {
+        infoInModal=  this.state.printedText
+      }
       this.setState({
         modalVisible: true,
+        infoInModal: infoInModal,
       });
     }
 
@@ -863,7 +872,10 @@ class notesRender extends Component {
       let delayToApply = delaySoFar*1000
 
       if (webMidiEnabled & !notesPlayEnded) {
-        this.playMidiNote(i,delayToApply)
+        if (enableExternalSound) {
+          this.playMidiNote(i,delayToApply)
+        }
+
       }
 
 
@@ -888,13 +900,19 @@ class notesRender extends Component {
                     </h2>
                   </div>
               </Animated>
-
-
-
             </div>
         </Delayed>
         {(notesPlayEnded || webMidiEnabled)?
-          null
+          <Delayed key={'tone'+i} id={'tone'+i} waitBeforeShow={delaySoFar*1000}>
+          {enableExternalSound?
+          null:
+            <OneNoteSound
+            noteIndex = {i}
+            playThisNote = {this.playThisNote}
+            />
+
+          }
+          </Delayed>
           :
           <Delayed key={'tone'+i} id={'tone'+i} waitBeforeShow={delaySoFar*1000}>
           <OneNoteSound
@@ -909,6 +927,23 @@ class notesRender extends Component {
       )
     }
 
+    enableExternalSound = () => {
+
+      if (enableExternalSound) {
+        message.info('sound output in keyboard disabled')
+      } else {
+        message.info('sound output in keyboard enabled')
+      }
+
+      enableExternalSound = !enableExternalSound
+      // let {enableExternalSound} = this.state
+      // console.log({enableExternalSound})
+  
+
+      // this.setState({
+      //   enableExternalSound: !enableExternalSound
+      // })
+    }
     headerBox = () => {
 
       // let backText = "<<"
@@ -962,9 +997,13 @@ class notesRender extends Component {
 
             let options = (
               <Animated className="navButtonBox" animationIn="fadeIn" animationOut="zoomOut" isVisible={true}>
-                <div className="notesNavButton" onClick={this.showModal}
+                <div className="notesNavButton" onClick={this.enableExternalSound}
                 >
                 <Icon type="setting" />
+              </div>
+              <div className="notesNavButton" onClick={() => this.showModal('dev')}
+                >
+                <Icon type="info" />
               </div>
               </Animated>
             )
@@ -1563,7 +1602,7 @@ class notesRender extends Component {
                         className="custom"
                         footer={null}
                       >
-                      <h1 className="songInfoButton">{info}</h1>
+                      <h1 className="songInfoButton">{this.state.infoInModal}</h1>
                       </Modal>
 
                     </div>
