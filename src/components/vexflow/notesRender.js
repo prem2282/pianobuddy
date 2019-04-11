@@ -837,7 +837,7 @@ class notesRender extends Component {
 
       // console.log({componentDidMount}, {staveIndex}, {noteObject});
       let noteWidth = window.innerWidth*.6/noteCount;
-      console.log({noteCount}, {noteWidth});
+      // console.log({noteCount}, {noteWidth});
 
       // let noteKey =  note.split('-');
       let vexFlowNote = this.noteForVexFlowNew(note);
@@ -1010,7 +1010,7 @@ class notesRender extends Component {
 
       let stave_note = noteObject;
       let noteCount = this.noteCount(noteObject);
-      console.log({noteObject},{i})
+      // console.log({noteObject},{i})
 
       let notesBox = (
         <div  className="flexNotesTop">
@@ -1366,7 +1366,11 @@ class notesRender extends Component {
               </div>
               <div className="songOptionBox" style={{  backgroundImage:backgroundImage, backgroundColor:'transparent' }}>
                 <h2 className="songOptionHeaderText">{this.state.notes_title}</h2>
-                <PianoKeysOne/>
+                {this.props.baseCategory === 'ragas'?
+                 <PianoKeysOne/>
+                :null
+                }
+                
                 <Animated animationIn="bounceIn" animationOut="bounceOut" isVisible={songMenuVisibility}>
                   <h2 id='practice' className="songOptionButton" onClick={(e) => this.resetSwitches(e)}>Easy Practice</h2>
                   <h2 id='scroll' className="songOptionButton" onClick={(e) => this.resetSwitches(e)}>Hard Practice</h2>
@@ -1377,23 +1381,25 @@ class notesRender extends Component {
           </div>
         )
 
-        let showAllScreen = (
-          <Animated animationIn="fadeIn" animationOut="zoomOut" isVisible={showAll}>
-          {noteObject.map((stave_note,i) => {
-            return(
-              <div className='showAllContainer'>
-                {this.lineBox(stave_note,i)}
-              </div>
-            )
-          })}
-          </Animated>
-        )
+        // let showAllScreen = (
+        //   <Animated animationIn="fadeIn" animationOut="zoomOut" isVisible={showAll}>
+        //   {noteObject.map((stave_note,i) => {
+        //     return(
+        //       <div className='showAllContainer'>
+        //         {this.lineBox(stave_note,i)}
+        //       </div>
+        //     )
+        //   })}
+        //   </Animated>
+        // )
 
-        let showOneLine = (
-          <Animated  animationIn="fadeIn" animationOut="fadeInRight" isVisible={showLine}>
-              {this.lineBox(noteObject[staveIndex],staveIndex)}
-          </Animated>
-        )
+        console.log('before showOneLine')
+        // let showOneLine = (
+        //   <Animated  animationIn="fadeIn" animationOut="fadeInRight" isVisible={showLine}>
+        //       {this.lineBox(noteObject[staveIndex],staveIndex)}
+        //   </Animated>
+        // )
+        console.log('after showOneLine')
 
         let endOfSongScreen = (
           <Animated  animationIn="zoomIn" animationOut="bounceOut" isVisible={choiceVisibility}>
@@ -1475,6 +1481,7 @@ class notesRender extends Component {
           </Animated>
         )
 
+        
         return (
               <div className="notesPage" >
                   {this.headerBox()}
@@ -1483,12 +1490,22 @@ class notesRender extends Component {
                   :
                   <div>
                     {showAll?
-                      showAllScreen
+                      <Animated animationIn="fadeIn" animationOut="zoomOut" isVisible={showAll}>
+                      {noteObject.map((stave_note,i) => {
+                        return(
+                          <div className='showAllContainer'>
+                            {this.lineBox(stave_note,i)}
+                          </div>
+                        )
+                      })}
+                      </Animated>
                       :
                       null
                     }
                     {playNotes && !allNotesCompleted?
-                      showOneLine
+                    <Animated  animationIn="fadeIn" animationOut="fadeInRight" isVisible={showLine}>
+                      {this.lineBox(noteObject[staveIndex],staveIndex)}
+                    </Animated>
                       :null
                     }
 

@@ -49,20 +49,20 @@ const tmfObject = {
   ]
 }
 
-TfmToNoteObject(tmfObject);
+// TfmToNoteObject(tmfObject);
 formScale('C', 'major');
 let Melakartha = MelakarthaList();
 
-for (var i = 0; i < Melakartha.length; i++) {
-  let sarali = createSarali(Melakartha[i]);
-  console.log({sarali});
-}
-for (var i = 0; i < Melakartha.length; i++) {
-  let westernNotes = carnaticToWestern(Melakartha[i]);
-  console.log({westernNotes});
-}
+// for (var i = 0; i < Melakartha.length; i++) {
+//   let sarali = createSarali(Melakartha[i]);
+//   // console.log({sarali});
+// }
+// for (var i = 0; i < Melakartha.length; i++) {
+//   let westernNotes = carnaticToWestern(Melakartha[i]);
+//   console.log({westernNotes});
+// }
 
-console.log(RagaNames());
+// console.log(RagaNames());
 // console.log({composerList});
 // // let composerSongList = getComposerSongList(composerList[0]);
 // console.log({composerSongList});
@@ -74,6 +74,7 @@ class controlPage extends Component {
     this.state = {
       pageId: [0],
       courseList: courseList,
+      baseCategory: null,
       songCategory: null,
       subCategory: null,
       lessonList: [],
@@ -89,6 +90,7 @@ class controlPage extends Component {
 
     this.setState({
       menuVisibility: false,
+      baseCategory: 'lessons',
     })
 
     window.setTimeout(() => {
@@ -113,6 +115,7 @@ class controlPage extends Component {
 
         this.setState({
           menuVisibility: false,
+          baseCategory: 'ragas',
         })
 
         window.setTimeout(() => {
@@ -135,6 +138,7 @@ class controlPage extends Component {
 
     this.setState({
       menuVisibility: false,
+      baseCategory: 'songs',
     })
 
     window.setTimeout(() => {
@@ -854,6 +858,7 @@ class controlPage extends Component {
               <NotesPage
                 song = {song}
                 homeButton = {this.backButtonClicked}
+                baseCategory = {this.state.baseCategory}
               />
           </div>
           :
