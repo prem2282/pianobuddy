@@ -29,10 +29,10 @@ let whiteKeys = [0,2,4,5,7,9,11];
 let input = null;
 let output = null;
 let context = new AudioContext();
-let instrument = 771;
+let instrument = 3;
 let noteIndex = 0;
-let synth = new Tone.Synth().toMaster()
-let transport = Tone.Transport;
+// let synth = new Tone.Synth().toMaster()
+// let transport = Tone.Transport;
 
 class notesRender extends Component {
     constructor(props) {
@@ -54,21 +54,17 @@ class notesRender extends Component {
            info = song.info;
            stavesCount = song.notes.length;
            noteObject = song.notes.map((stave_note) => {return NoteForMidiPlayer(stave_note)});
-           noteStr = song.notes.map((stave_note) => {return NoteForVex(stave_note)})
-           noteDelay = noteObject.map((stave_note) => {
-            return(
-              stave_note.map((note) => {
-                return Tone.Time(note.noteDuration).toSeconds()
-              })
-            )
-          } )
+           console.log({noteObject});
+          //  noteStr = song.notes.map((stave_note) => {return NoteForVex(stave_note)})
+          let  noteDelay = noteObject.map((stave_note) => this.findDelay(stave_note))
+
         }
 
         console.log({noteObject});
         // Default state
         this.state = {
             // stave_notes: song.notes,
-            stave_notes: noteStr,
+            // stave_notes: noteStr,
             notes_title: title,
             lyrics: lyrics,
             info: info,
@@ -138,6 +134,28 @@ class notesRender extends Component {
     //
     // }
 
+    findDelay = (stave_note) => {
+      return(
+        stave_note.map((note) => {
+          if (Array.isArray(note)) {
+            // if this a chord, then the duration is going to be the same for all notes in the chord.
+            // so it is enough to send the duration of 1st note on the chord.
+            // below code to get duration of each note on the chord is not required.
+            // let delay = [];
+            // for (var i = 0; i < note.length; i++) {
+            //   let delayTime = Tone.Time(note[i].noteDuration).toSeconds()
+            //   delay.push(delayTime)
+            // }
+            // return delay;
+            return Tone.Time(note[0].noteDuration).toSeconds()
+
+          } else {
+            return Tone.Time(note.noteDuration).toSeconds()
+          }
+        })
+      )
+
+    }
     initializeSong = () => {
       let {song} = this.props
 
@@ -147,18 +165,13 @@ class notesRender extends Component {
       let  image = song.image;
       let  stavesCount = song.notes.length;
       let  noteObject = song.notes.map((stave_note) => {return NoteForMidiPlayer(stave_note)});
-      let  noteStr = song.notes.map((stave_note) => {return NoteForVex(stave_note)})
-      let  noteDelay = noteObject.map((stave_note) => {
-         return(
-           stave_note.map((note) => {
-             return Tone.Time(note.noteDuration).toSeconds()
-           })
-         )
-       } )
+      // console.log({noteObject});
+      // let  noteStr = song.notes.map((stave_note) => {return NoteForVex(stave_note)})
+      let  noteDelay = noteObject.map((stave_note) => this.findDelay(stave_note))
 
        this.setState({
             // stave_notes: song.notes,
-            stave_notes: noteStr,
+            // stave_notes: noteStr,
             notes_title: title,
             lyrics: lyrics,
             info: info,
@@ -179,78 +192,96 @@ class notesRender extends Component {
       let notesCount = noteObject[staveIndex].length;
 
       console.log({i}, {notesCount});
+
       if (i === notesCount) {
         console.log("all notes done");
         this.setState({
           notesPlayEnded: true,
         })
       } else {
-        // let {noteObject} =
-        console.log({noteObject})
-        // let instrument = 3;
-        let {noteString, noteDuration, noteScale, durationVex} = thisNoteObject
-        // console.log({noteString},{noteDuration},{noteScale});
-        let noteNum = NoteToNum(noteString) + Number(noteScale)*12;
-        // console.log({noteNum});
-        let duration = Tone.Time(noteDuration).toSeconds();
-        // console.log({duration});
-        if (durationVex === 'qr' || durationVex === 'hr' || durationVex === '8r'  ) {
-          //this is a pause. so dont play it
-        } else {
-          this.midiSounds.playChordNow(instrument, [noteNum], duration)
+
+      }
+
+
+      // let {noteObject} =
+      console.log({noteObject})
+      // let instrument = 3;
+      let {noteString, noteDuration, noteScale, durationVex} = thisNoteObject
+      let noteNum = [];
+      if (Array.isArray(thisNoteObject)) {
+        noteDuration = thisNoteObject[0].noteDuration;
+        noteScale = thisNoteObject[0].noteScale;
+        durationVex = thisNoteObject[0].durationVex;
+        noteString = []
+        for (var i = 0; i < thisNoteObject.length; i++) {
+          let noteNumber = NoteToNum(thisNoteObject[0].noteString) + Number(noteScale)*12
+          noteNum.push(noteNumber)
         }
+      } else {
+        noteNum.push(NoteToNum(noteString) + Number(noteScale)*12);
       }
 
 
 
 
+      // console.log({noteNum});
+      let duration = Tone.Time(noteDuration).toSeconds();
+      console.log({thisNoteObject},{noteNum},{duration},{instrument});
+      // console.log({duration});
+      if (durationVex === 'qr' || durationVex === 'hr' || durationVex === '8r'  ) {
+        //this is a pause. so dont play it
+      } else {
+        this.midiSounds.playChordNow(instrument, noteNum, duration)
+      }
+
+
 
 
     }
-    playNotesAlt2 = () => {
-
-          let noteObject = this.state.noteObject[this.state.staveIndex]
-
-          let noteDuration = this.state.noteDelay[this.state.staveIndex]
-          let timeNow = Tone.context.currentTime
-                console.log({noteObject})
-
-          noteObject.forEach((note,index) => {
-            let {noteString, noteScale} = note
-            let noteNum = NoteToNum(noteString) + Number(noteScale)*12;
-            console.log(timeNow, noteDuration[index],instrument,noteString );
-            this.midiSounds.playChordAt(timeNow, instrument, [noteNum], noteDuration[index])
-            timeNow = timeNow + noteDuration[index];
-          })
-          console.log(this.midiSounds);
-
-
-    }
-    playNotesAlt = () => {
-
-      let noteObject = this.state.noteObject[this.state.staveIndex]
-      console.log({noteObject})
-
-      let time = Tone.context.currentTime;
-
-      // console.log(time)
-      noteObject.forEach((note,index) => {
-        console.log({note},{index},{time})
-        let {noteString, noteScale, noteDuration} = note;
-        let duration = Tone.Time(noteDuration);
-        let noteNum = NoteToNum(noteString) + noteScale*12;
-
-        this.midiSounds.playChordAt(time, instrument, [noteNum], duration)
-        this.setState({
-          // playNotes: false,
-          time: time
-        })
-        time = time + duration
-
-      })
-
-
-    }
+    // playNotesAlt2 = () => {
+    //
+    //       let noteObject = this.state.noteObject[this.state.staveIndex]
+    //
+    //       let noteDuration = this.state.noteDelay[this.state.staveIndex]
+    //       let timeNow = Tone.context.currentTime
+    //             console.log({noteObject})
+    //
+    //       noteObject.forEach((note,index) => {
+    //         let {noteString, noteScale} = note
+    //         let noteNum = NoteToNum(noteString) + Number(noteScale)*12;
+    //         console.log(timeNow, noteDuration[index],instrument,noteString );
+    //         this.midiSounds.playChordAt(timeNow, instrument, [noteNum], noteDuration[index])
+    //         timeNow = timeNow + noteDuration[index];
+    //       })
+    //       console.log(this.midiSounds);
+    //
+    //
+    // }
+    // playNotesAlt = () => {
+    //
+    //   let noteObject = this.state.noteObject[this.state.staveIndex]
+    //   console.log({noteObject})
+    //
+    //   let time = Tone.context.currentTime;
+    //
+    //   // console.log(time)
+    //   noteObject.forEach((note,index) => {
+    //     console.log({note},{index},{time})
+    //     let {noteString, noteScale, noteDuration} = note;
+    //     let duration = Tone.Time(noteDuration);
+    //     let noteNum = NoteToNum(noteString) + noteScale*12;
+    //
+    //     this.midiSounds.playChordAt(time, instrument, [noteNum], duration)
+    //     this.setState({
+    //       // playNotes: false,
+    //       time: time
+    //     })
+    //     time = time + duration
+    //
+    //   })
+    //
+    //
+    // }
 
 
     keyInputReceived = (e) => {
@@ -766,8 +797,14 @@ class notesRender extends Component {
     noteCount = (notes) => {
       // let notesArray = notes.split(' ');
       let noteCount = 0;
+      console.log(notes.length);
+      console.log({notes});
       for (let i = 0; i < notes.length; i++) {
         let durationVex = notes[i].durationVex;
+        if (Array.isArray(notes[i])) {
+          durationVex = notes[i][0].durationVex;
+        }
+
         // if (noteSplit.length === 2) {
           // let duration = noteSplit[1];
           switch (durationVex) {
@@ -809,8 +846,23 @@ class notesRender extends Component {
 
       let {noteLetter, noteScale, durationVex, acc} = noteObject;
 
+      if (Array.isArray(noteObject)) {
+        console.log('it is an array');
+        noteScale = noteObject[0].noteScale;
+        durationVex = noteObject[0].durationVex;
+        acc = noteObject[0].acc
+        let chord = [];
+        for (var i = 0; i < noteObject.length; i++) {
+          chord.push(noteObject[i].noteLetter)
+        }
+        noteLetter = chord.join('&')
+      }
+
+
+
+
       let noteForVexFlow = noteLetter + "/" + noteScale + "/" + durationVex + "/" + acc;
-      console.log(noteForVexFlow);
+
       return noteForVexFlow
 
     }
@@ -873,7 +925,7 @@ class notesRender extends Component {
 
       if (webMidiEnabled & !notesPlayEnded) {
         if (enableExternalSound) {
-          this.playMidiNote(i,delayToApply)
+          // this.playMidiNote(i,delayToApply)
         }
 
       }
@@ -903,16 +955,7 @@ class notesRender extends Component {
             </div>
         </Delayed>
         {(notesPlayEnded || webMidiEnabled)?
-          <Delayed key={'tone'+i} id={'tone'+i} waitBeforeShow={delaySoFar*1000}>
-          {enableExternalSound?
-          null:
-            <OneNoteSound
-            noteIndex = {i}
-            playThisNote = {this.playThisNote}
-            />
-
-          }
-          </Delayed>
+          null
           :
           <Delayed key={'tone'+i} id={'tone'+i} waitBeforeShow={delaySoFar*1000}>
           <OneNoteSound
@@ -938,7 +981,7 @@ class notesRender extends Component {
       enableExternalSound = !enableExternalSound
       // let {enableExternalSound} = this.state
       // console.log({enableExternalSound})
-  
+
 
       // this.setState({
       //   enableExternalSound: !enableExternalSound
@@ -1409,7 +1452,7 @@ class notesRender extends Component {
                  <PianoKeysOne/>
                 :null
                 }
-                
+
                 <Animated animationIn="bounceIn" animationOut="bounceOut" isVisible={songMenuVisibility}>
                   <h2 id='practice' className="songOptionButton" onClick={(e) => this.resetSwitches(e)}>Easy Practice</h2>
                   <h2 id='scroll' className="songOptionButton" onClick={(e) => this.resetSwitches(e)}>Hard Practice</h2>
@@ -1520,7 +1563,7 @@ class notesRender extends Component {
           </Animated>
         )
 
-        
+
         return (
               <div className="notesPage" >
                   {this.headerBox()}

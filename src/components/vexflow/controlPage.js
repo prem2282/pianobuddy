@@ -495,13 +495,13 @@ class controlPage extends Component {
     if (pageId===0) {
       return(
         <Animated animationIn="bounceIn" animationOut="zoomOut" isVisible={menuVisibility}>
-          <div className = "controlMenuOne" onClick={this.lessonsSelected}>
+          <div className = "controlMenuOne topMenuButton" onClick={this.lessonsSelected}>
             Lessons
           </div>
-          <div className = "controlMenuOne" onClick={this.songsSelected}>
+          <div className = "controlMenuOne topMenuButton" onClick={this.songsSelected}>
             Songs
           </div>
-          <div className = "controlMenuOne" onClick={this.ragasSelected}>
+          <div className = "controlMenuOne topMenuButton" onClick={this.ragasSelected}>
             Ragas
           </div>
         </Animated>
@@ -524,7 +524,7 @@ class controlPage extends Component {
         courseList.map((course,index) => {
           return(
             <Animated animationIn="bounceIn" animationOut="zoomOut" isVisible={menuVisibility}>
-              <div key={index} id={'cat' + index} className = "controlMenuOne" onClick={() => this.catSelected(index)}>
+              <div key={index} id={'cat' + index} className = "controlMenuOne lessonButton" onClick={() => this.catSelected(index)}>
                 {course.category}
               </div>
             </Animated>
@@ -558,7 +558,7 @@ class controlPage extends Component {
         lessonNames.map((lesson,index) => {
           return(
             <Animated animationIn="bounceIn" animationOut="zoomOut" isVisible={menuVisibility}>
-              <div key={index} id={'les' + index} className = "controlMenuOne" onClick={() => this.lessonNumSelected(index)}>
+              <div key={index} id={'les' + index} className = "controlMenuOne lessonButton" onClick={() => this.lessonNumSelected(index)}>
                 <div className="lessonNumBox">{index+1}</div>
                 {lesson}
               </div>
@@ -585,7 +585,7 @@ class controlPage extends Component {
         songCategories.map((category,index) => {
           return(
             <Animated animationIn="bounceIn" animationOut="zoomOut" isVisible={menuVisibility}>
-              <div key={index} id={'songcat' + index} className = "controlMenuOne" onClick={() => this.songcatSelected(category)}>
+              <div key={index} id={'songcat' + index} className = "controlMenuOne songButton" onClick={() => this.songcatSelected(category)}>
                 {category}
               </div>
             </Animated>
@@ -611,7 +611,7 @@ class controlPage extends Component {
         subCatList.map((category,index) => {
           return(
             <Animated animationIn="bounceIn" animationOut="zoomOut" isVisible={menuVisibility}>
-              <div key={index} id={'songsubcat' + index} className = "controlMenuOne" onClick={() => this.songSubCatSelected(category)}>
+              <div key={index} id={'songsubcat' + index} className = "controlMenuOne songButton" onClick={() => this.songSubCatSelected(category)}>
                 {category}
               </div>
             </Animated>
@@ -646,7 +646,7 @@ class controlPage extends Component {
         lessonNames.map((lesson,index) => {
           return(
             <Animated animationIn="bounceIn" animationOut="zoomOut" isVisible={menuVisibility}>
-              <div key={index} id={'song' + index} className = "controlMenuOne" onClick={() => this.songNumSelected(index)}>
+              <div key={index} id={'song' + index} className = "controlMenuOne songButton" onClick={() => this.songNumSelected(index)}>
                 {lesson}
               </div>
             </Animated>
@@ -673,7 +673,7 @@ class controlPage extends Component {
         ragaCategories.map((category,index) => {
           return(
             <Animated animationIn="bounceIn" animationOut="zoomOut" isVisible={menuVisibility}>
-              <div key={index} id={'songcat' + index} className = "controlMenuOne" onClick={() => this.ragacatSelected(index,category)}>
+              <div key={index} id={'songcat' + index} className = "controlMenuOne ragaButton" onClick={() => this.ragacatSelected(index,category)}>
                 {category}
               </div>
             </Animated>
@@ -699,7 +699,7 @@ class controlPage extends Component {
         subCatList.map((category,index) => {
           return(
             <Animated animationIn="bounceIn" animationOut="zoomOut" isVisible={menuVisibility}>
-              <div key={index} id={'songsubcat' + index} className = "ragaCategoryButton" onClick={() => this.ragaSubCatSelected(index,category)}>
+              <div key={index} id={'songsubcat' + index} className = "controlMenuOne ragaButton" onClick={() => this.ragaSubCatSelected(index,category)}>
                 {category}
               </div>
             </Animated>
@@ -727,7 +727,7 @@ class controlPage extends Component {
         lessonList.map((lesson,index) => {
           return(
             <Animated animationIn="bounceIn" animationOut="zoomOut" isVisible={menuVisibility}>
-              <div key={index} id={'song' + index} className = "ragaCategoryButton" onClick={() => this.ragaNumSelected(index)}>
+              <div key={index} id={'song' + index} className = "controlMenuOne ragaButton" onClick={() => this.ragaNumSelected(index)}>
                 {lesson}
               </div>
             </Animated>
@@ -796,35 +796,67 @@ class controlPage extends Component {
 
     switch (pageId) {
       case 0:
-        containerClass = 'controlMenuContainer0'
+        containerClass = 'controlMenuContainerBase topMenuBack'
         break;
       case 1:
-        containerClass = 'controlMenuContainer2'
+        containerClass = 'controlMenuContainerBase lessonBack'
         break;
       case 2:
-        containerClass = 'controlMenuContainer2'
+        containerClass = 'controlMenuContainerBase lessonBack'
         break;
       case 3:
-        containerClass = 'songCategoryContainer'
+        containerClass = 'controlMenuContainerBase songBack'
         break;
       case 4:
-        containerClass = 'songCategoryContainer'
+        containerClass = 'controlMenuContainerBase songBack'
         break;
       case 5:
-        containerClass = 'songCategoryContainer'
+        containerClass = 'controlMenuContainerBase songBack'
         break;
       case 6:
-        containerClass = 'ragaCategoryContainer'
+        containerClass = 'controlMenuContainerBase ragaBack ragagrid1'
         break;
       case 7:
-        containerClass = 'ragaCategoryContainer'
+        containerClass = 'controlMenuContainerBase ragaBack ragagrid2'
         break;
       case 8:
-        containerClass = 'ragaCategoryContainer'
+        containerClass = 'controlMenuContainerBase ragaBack ragagrid3'
         break;
       default:
 
     }
+
+    // switch (pageId) {
+    //   case 0:
+    //     containerClass = 'controlMenuContainer0'
+    //     break;
+    //   case 1:
+    //     containerClass = 'controlMenuContainer2'
+    //     break;
+    //   case 2:
+    //     containerClass = 'controlMenuContainer2'
+    //     break;
+    //   case 3:
+    //     containerClass = 'songCategoryContainer'
+    //     break;
+    //   case 4:
+    //     containerClass = 'songCategoryContainer'
+    //     break;
+    //   case 5:
+    //     containerClass = 'songCategoryContainer'
+    //     break;
+    //   case 6:
+    //     containerClass = 'ragaCategoryContainer'
+    //     break;
+    //   case 7:
+    //     containerClass = 'ragaCategoryContainer'
+    //     break;
+    //   case 8:
+    //     containerClass = 'ragaCategoryContainer'
+    //     break;
+    //   default:
+    //
+    // }
 
 
 

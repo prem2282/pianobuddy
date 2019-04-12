@@ -35,11 +35,20 @@ const noteForMidiPlayer = (noteStr) => {
                 case "q":
                   duration = '4n'
                   break;
+                case "4d":
+                  duration = '6n'
+                  break;
                 case "qr":
                   duration = '4n'
                   break;
                 case "8":
                 duration = '8n'
+                  break;
+                case "8r":
+                duration = '8n'
+                  break;
+                case "16":
+                duration = '16n'
                   break;
                 default:
 

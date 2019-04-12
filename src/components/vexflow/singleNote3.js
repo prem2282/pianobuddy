@@ -25,10 +25,19 @@ export default class SingleNote extends Component {
         if (duration === 'q') {
             return noteWidth;
         }
+        if (duration === '4d') {
+            return noteWidth*1.5;
+        }
         if (duration === 'qr') {
             return noteWidth;
         }
+        if (duration === '12') {
+            return noteWidth;
+        }
         if (duration === 'h') {
+            return noteWidth*2;
+        }
+        if (duration === '3') {
             return noteWidth*2;
         }
         if (duration === 'w') {
@@ -49,6 +58,9 @@ export default class SingleNote extends Component {
      findBeatCount = (duration) => {
         if (duration === 'q') {
             return 1;
+        }
+        if (duration === '4d') {
+            return 1.5;
         }
         if (duration === 'qr') {
             return 1;
@@ -74,42 +86,62 @@ export default class SingleNote extends Component {
      componentDidMount() {
 
         let {notes, noteid} = this.props
-        console.log({notes});
+        // console.log({notes});
         let keynotes = notes.map((note) => {
+          // let note = null;
+          // if (Array.isArray(keynote)) {
+          //   note = {...keynote[0]}
+          // } else {
+          //  note = {...keynote}
+          // }
           let noteDetails = note.split('/');
 
-          let noteLetter = noteDetails[0];
-          let noteOctave =  noteDetails[1];
+          let noteLetter = noteDetails[0].split('&');
+
+          let noteScale =  noteDetails[1];
           let noteDuration = noteDetails[2];
           let noteAcc = null;
           if (noteDetails.length === 4) {
             noteAcc = noteDetails[3];
           }
+
+
           let staveWidth = this.findWidth(noteDuration);
+          console.log({staveWidth});
           let beatsCount = this.findBeatCount(noteDuration);
-
-
           return({
               noteLetter:noteLetter,
-              noteOctave:noteOctave,
+              noteScale:noteScale,
               noteDuration:noteDuration,
               noteAcc:noteAcc,
               staveWidth:staveWidth,
               beatsCount: beatsCount,
           })
+        //   let staveWidth = this.findWidth(note.noteDuration);
+        //   let beatsCount = this.findBeatCount(note.noteDuration);
+        //
+        //
+        //   return({
+        //       noteLetter:note.noteLetter,
+        //       noteScale:note.noteScale,
+        //       noteDuration:note.noteDuration,
+        //       noteAcc:note.acc,
+        //       staveWidth:staveWidth,
+        //       beatsCount: beatsCount,
+        //   })
         })
 
-        console.log({keynotes});
+        // console.log({keynotes});
         let totalWidth = 0;
         keynotes.forEach((note) => {
           totalWidth = totalWidth + note.staveWidth
         })
-        console.log({totalWidth});
+        // console.log({totalWidth});
         let totalBeatsCount = 0;
         keynotes.forEach((note) => {
           totalBeatsCount = totalBeatsCount + note.beatsCount
         })
-        console.log({totalBeatsCount});
+        // console.log({totalBeatsCount});
         var div = document.createElement('div');
         var renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
         var stave = new VF.Stave(-2, 0, totalWidth+4)
@@ -124,15 +156,22 @@ export default class SingleNote extends Component {
 
         let staveNotes = keynotes.map((note) => {
 
-          let {noteLetter, noteAcc, noteDuration, noteOctave} = note
-          console.log({noteLetter},{noteAcc} ,{noteDuration}, {noteOctave});
-          let noteStr = noteLetter+"/"+noteOctave;
-          console.log(noteStr);
+          let {noteLetter, noteAcc, noteDuration, noteScale} = note
+          // console.log({noteLetter},{noteAcc} ,{noteDuration}, {noteScale});
+
+          let noteStr = []
+
+          for (var i = 0; i < noteLetter.length; i++) {
+            noteStr.push(noteLetter[i]+"/"+noteScale)
+          }
+
+
+          // console.log(noteStr);
           let staveNote = null;
           if (noteAcc) {
-              staveNote = new VF.StaveNote({clef: "treble", keys: [noteStr], duration: noteDuration }).addAccidental(0, new VF.Accidental(noteAcc))
+              staveNote = new VF.StaveNote({clef: "treble", keys: noteStr, duration: noteDuration }).addAccidental(0, new VF.Accidental(noteAcc))
           } else {
-              staveNote = new VF.StaveNote({clef: "treble", keys: [noteStr], duration: noteDuration })
+              staveNote = new VF.StaveNote({clef: "treble", keys: noteStr, duration: noteDuration })
           }
 
           return(staveNote)
