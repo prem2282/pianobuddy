@@ -925,7 +925,7 @@ class notesRender extends Component {
 
       if (webMidiEnabled & !notesPlayEnded) {
         if (enableExternalSound) {
-          // this.playMidiNote(i,delayToApply)
+          this.playMidiNote(i,delayToApply)
         }
 
       }
