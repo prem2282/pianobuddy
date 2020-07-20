@@ -1,0 +1,28 @@
+.sh-back {
+  background-color: antiqueWhite;
+}
+
+.iframe-top {
+  display: grid;
+  grid-template-columns: 10% 10% 60% 10% 10%;
+  height: 50px;
+  background-color: #33b1f8;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  padding: .2rem;
+}
+.iframe-hide {
+  position: absolute;
+  top: auto;
+  bottom: 0;
+  height: 9%;
+  width: 9%;
+  background-color: #33b1f8;
+  text-align: center;
+  justify-content: center;
+  padding: 10px;
+  margin-bottom: 2px;
+  /* background-color:black; */
+  /* background-color: transparent; */
+}
